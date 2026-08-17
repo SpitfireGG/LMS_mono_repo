@@ -1,25 +1,80 @@
-import type { 
-  CourseItem, 
-  BlogPostItem, 
-  TestimonialItem, 
-  FAQItem, 
-  ServiceItem, 
-  TeamMemberItem, 
-  AnnouncementItem, 
+import type {
+  CourseItem,
+  BlogPostItem,
+  TestimonialItem,
+  FAQItem,
+  ServiceItem,
+  TeamMemberItem,
+  AnnouncementItem,
   CaseStudyItem,
   PaginatedResponse,
   PublishStatus,
-  QueryParams 
+  QueryParams,
+  PaymentItem,
+  PaymentConfig,
+  CheckoutResult,
+  CheckoutRequest,
+  PaymentStatusValue,
+  WishlistEntry,
 } from './types';
+import { getAccessToken, getSession, updateTokens, clearSession } from '../auth';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 export interface FetchOptions extends RequestInit {
   params?: Record<string, string | number | boolean | undefined>;
+  /** Set once a request has already been retried after a token refresh. */
+  retried?: boolean;
+}
+
+/** The API wraps every payload in `{ success, data, timestamp }`. */
+function unwrap<T>(payload: unknown): T {
+  if (
+    payload &&
+    typeof payload === 'object' &&
+    'success' in payload &&
+    'data' in payload &&
+    typeof (payload as { success: unknown }).success === 'boolean'
+  ) {
+    return (payload as { data: T }).data;
+  }
+  return payload as T;
+}
+
+let refreshInFlight: Promise<boolean> | null = null;
+
+/** Rotates the access token once, sharing a single request across callers. */
+async function refreshSession(): Promise<boolean> {
+  const session = getSession();
+  if (!session?.refreshToken) return false;
+
+  refreshInFlight ??= (async () => {
+    try {
+      const response = await fetch(`${API_BASE}/api/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken: session.refreshToken }),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        clearSession();
+        return false;
+      }
+      const tokens = unwrap<{ accessToken: string; refreshToken: string }>(await response.json());
+      updateTokens(tokens.accessToken, tokens.refreshToken);
+      return true;
+    } catch {
+      return false;
+    } finally {
+      refreshInFlight = null;
+    }
+  })();
+
+  return refreshInFlight;
 }
 
 async function fetchJson<T>(endpoint: string, options: FetchOptions = {}): Promise<T> {
-  const { params, headers, ...fetchOptions } = options;
+  const { params, headers, retried, ...fetchOptions } = options;
 
   const searchParams = new URLSearchParams();
   if (params) {
@@ -31,26 +86,38 @@ async function fetchJson<T>(endpoint: string, options: FetchOptions = {}): Promi
   }
 
   const url = `${API_BASE}/api${endpoint}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+  const token = getAccessToken();
+
+  // FormData sets its own multipart boundary — never force a content type on it.
+  const isFormData = typeof FormData !== 'undefined' && fetchOptions.body instanceof FormData;
 
   const response = await fetch(url, {
     ...fetchOptions,
     headers: {
-      'Content-Type': 'application/json',
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
     },
     credentials: 'include',
   });
 
+  if (response.status === 401 && !retried && getSession()) {
+    if (await refreshSession()) {
+      return fetchJson<T>(endpoint, { ...options, retried: true });
+    }
+  }
+
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: 'Request failed' }));
-    throw new Error(error.message || `HTTP error! status: ${response.status}`);
+    const message = Array.isArray(error.message) ? error.message.join(', ') : error.message;
+    throw new Error(message || `HTTP error! status: ${response.status}`);
   }
 
   if (response.status === 204) {
     return undefined as T;
   }
 
-  return response.json();
+  return unwrap<T>(await response.json());
 }
 
 export const api = {
@@ -396,6 +463,38 @@ export const subscriptionApi = {
       active: boolean;
       createdAt: string;
     }>>('/subscriptions', params),
+};
+
+export const wishlistApi = {
+  list: (params?: { page?: number; limit?: number }) =>
+    api.get<PaginatedResponse<WishlistEntry>>('/wishlist', params),
+
+  ids: () => api.get<string[]>('/wishlist/ids'),
+
+  add: (courseId: string) => api.post<WishlistEntry>('/wishlist', { courseId }),
+
+  remove: (courseId: string) =>
+    api.delete<{ courseId: string; removed: boolean }>(`/wishlist/${courseId}`),
+
+  clear: () => api.delete<{ removed: number }>('/wishlist/all'),
+};
+
+export const paymentApi = {
+  config: () => api.get<PaymentConfig>('/payments/config'),
+
+  checkout: (data: CheckoutRequest) => api.post<CheckoutResult>('/payments/checkout', data),
+
+  list: (params?: { status?: PaymentStatusValue; page?: number; limit?: number }) =>
+    api.get<PaginatedResponse<PaymentItem>>('/payments', params),
+
+  getById: (id: string) => api.get<PaymentItem>(`/payments/${id}`),
+
+  /** Asks the API to re-read the payment from Stripe/Payoneer. */
+  refresh: (id: string) => api.post<PaymentItem>(`/payments/${id}/refresh`, {}),
+
+  /** Only available while the provider runs without credentials. */
+  sandbox: (id: string, decision: 'approve' | 'decline') =>
+    api.post<PaymentItem>(`/payments/${id}/sandbox`, { decision }),
 };
 
 export const authApi = {

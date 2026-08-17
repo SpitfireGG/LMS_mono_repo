@@ -4,6 +4,7 @@ import {
   formatStudents,
 } from "@/app/lib/courses";
 import type { CourseItem as ApiCourseItem } from "@/app/lib/api/types";
+import WishlistButton from "./WishlistButton";
 import {
   GlyphInterpreting,
   GlyphTestPrep,
@@ -94,6 +95,8 @@ export default function CourseCard({ c }: { c: ApiCourseItem }) {
           <span className="h-[7px] w-[7px] rounded-full" style={{ background: levelDot[level] }} />
           {c.level}
         </span>
+        {/* wishlist — bottom right, clear of the rating and level chips */}
+        <WishlistButton courseId={c.id} className="absolute bottom-[14px] right-[14px] z-10" />
       </div>
 
       {/* Body */}
@@ -141,12 +144,20 @@ export default function CourseCard({ c }: { c: ApiCourseItem }) {
               </>
             )}
           </div>
-          <a
-            href={`/courses/${c.slug}`}
-            className="shrink-0 rounded-[12px] bg-[#0a4a29] px-[17px] py-[9px] font-medium text-[14px] text-white no-underline transition-colors duration-300 hover:bg-[#056839]"
-          >
-            View Details
-          </a>
+          <div className="flex shrink-0 items-center gap-[8px]">
+            <a
+              href={`/courses/${c.slug}`}
+              className="rounded-[12px] border border-[#cfe3d6] px-[14px] py-[9px] font-medium text-[14px] text-[#0a4a29] no-underline transition-colors duration-300 hover:bg-[#e8f6ee]"
+            >
+              Details
+            </a>
+            <a
+              href={`/checkout/${c.slug}`}
+              className="rounded-[12px] bg-[#0a4a29] px-[17px] py-[9px] font-medium text-[14px] text-white no-underline transition-colors duration-300 hover:bg-[#056839]"
+            >
+              Enroll
+            </a>
+          </div>
         </div>
       </div>
     </article>

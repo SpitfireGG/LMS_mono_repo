@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/app/lib/utils";
 import { authApi } from "@/app/lib/api/client";
+import { setSession } from "@/app/lib/auth";
 
 type Mode = "login" | "signup";
 
@@ -97,6 +98,9 @@ const strengthColor = ["#c0603e", "#c0603e", "#e0a52e", "#50bc7e", "#056839"];
 export default function AuthForm({ mode }: { mode: Mode }) {
   const isLogin = mode === "login";
   const router = useRouter();
+  const searchParams = useSearchParams();
+  // Checkout and wishlist bounce guests here with ?next=/checkout/some-course
+  const next = searchParams.get("next");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -122,15 +126,20 @@ export default function AuthForm({ mode }: { mode: Mode }) {
     setLoading(true);
 
     try {
-      if (isLogin) {
-        await authApi.login(email, password);
-      } else {
-        await authApi.signup(name, email, password);
-      }
-      router.push("/courses");
+      const result = isLogin
+        ? await authApi.login(email, password)
+        : await authApi.signup(name, email, password);
+
+      setSession({
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+        user: result.user,
+      });
+
+      router.push(next && next.startsWith("/") ? next : "/courses");
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || "Something went wrong. Please try again.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }

@@ -15,6 +15,8 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule, {
     logger: ["log", "error", "warn", "debug", "verbose"],
+    // Keeps req.rawBody around so payment webhook signatures can be verified.
+    rawBody: true,
   });
 
   app.use(helmet());

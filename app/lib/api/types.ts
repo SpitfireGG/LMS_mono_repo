@@ -73,6 +73,99 @@ export interface CourseSeoMeta {
   lastModified?: string;
 }
 
+export type PaymentProviderKey = 'STRIPE' | 'PAYONEER' | 'CARD';
+
+export type PaymentStatusValue =
+  | 'PENDING'
+  | 'PROCESSING'
+  | 'REQUIRES_ACTION'
+  | 'SUCCEEDED'
+  | 'FAILED'
+  | 'CANCELLED'
+  | 'REFUNDED';
+
+/** The trimmed course the API embeds on a payment. */
+export interface PaymentCourse {
+  id: string;
+  slug: string;
+  title: string;
+  image: string | null;
+  tag: string;
+  author: string;
+}
+
+export interface PaymentItem {
+  id: string;
+  reference: string;
+  userId: string;
+  courseId: string;
+  provider: PaymentProviderKey;
+  status: PaymentStatusValue;
+  amount: number;
+  currency: string;
+  providerRef: string | null;
+  checkoutUrl: string | null;
+  failureReason: string | null;
+  metadata: Record<string, unknown> | null;
+  cardBrand: string | null;
+  cardLast4: string | null;
+  cardExpMonth: number | null;
+  cardExpYear: number | null;
+  paidAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  course?: PaymentCourse;
+}
+
+export interface PaymentMethodOption {
+  key: PaymentProviderKey;
+  label: string;
+  description: string;
+  enabled: boolean;
+  /** True when the provider has no credentials and settles locally. */
+  sandbox: boolean;
+}
+
+export interface PaymentConfig {
+  currency: string;
+  providers: PaymentMethodOption[];
+  stripePublishableKey: string | null;
+  acceptsRawCard: boolean;
+}
+
+export interface CardDetailsInput {
+  number: string;
+  expMonth: number;
+  expYear: number;
+  cvc: string;
+  holderName?: string;
+}
+
+export interface CheckoutRequest {
+  courseId: string;
+  provider: PaymentProviderKey;
+  paymentMethodId?: string;
+  card?: CardDetailsInput;
+  successUrl?: string;
+  cancelUrl?: string;
+}
+
+export interface CheckoutResult {
+  payment: PaymentItem;
+  /** Hosted provider page, or a 3-D Secure redirect for the card flow. */
+  checkoutUrl: string | null;
+  clientSecret: string | null;
+  sandbox: boolean;
+}
+
+export interface WishlistEntry {
+  id: string;
+  userId: string;
+  courseId: string;
+  createdAt: string;
+  course: CourseItem;
+}
+
 export interface PaginatedResponse<T> {
   data: T[];
   meta: {

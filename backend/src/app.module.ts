@@ -15,6 +15,8 @@ import { CaseStudiesModule } from "./case-studies/case-studies.module";
 import { AnnouncementsModule } from "./announcements/announcements.module";
 import { UploadsModule } from "./uploads/uploads.module";
 import { UsersModule } from "./users/users.module";
+import { PaymentsModule } from "./payments/payments.module";
+import { WishlistModule } from "./wishlist/wishlist.module";
 import { MailModule } from "./mail/mail.module";
 import { SeoModule } from "./seo/seo.module";
 import { JwtAuthGuard } from "./common/guards/jwt-auth.guard";
@@ -44,6 +46,8 @@ import { ConditionalRequestInterceptor } from "./common/interceptors/conditional
     AnnouncementsModule,
     UploadsModule,
     UsersModule,
+    PaymentsModule,
+    WishlistModule,
     SeoModule,
   ],
   providers: [

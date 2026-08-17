@@ -19,19 +19,27 @@ import {
   caseStudyApi,
   contactApi,
   subscriptionApi,
+  wishlistApi,
+  paymentApi,
 } from './client';
-import type { 
-  CourseItem, 
-  BlogPostItem, 
-  TestimonialItem, 
-  FAQItem, 
-  ServiceItem, 
-  TeamMemberItem, 
-  AnnouncementItem, 
+import type {
+  CourseItem,
+  BlogPostItem,
+  TestimonialItem,
+  FAQItem,
+  ServiceItem,
+  TeamMemberItem,
+  AnnouncementItem,
   CaseStudyItem,
   PaginatedResponse,
   PublishStatus,
+  WishlistEntry,
+  PaymentItem,
+  PaymentConfig,
+  CheckoutRequest,
+  CheckoutResult,
 } from './types';
+import { useIsAuthenticated } from '../auth';
 
 const STALE_TIME = 5 * 60 * 1000;
 const GC_TIME = 10 * 60 * 1000;
@@ -85,6 +93,17 @@ export const queryKeys = {
     list: (params?: Record<string, unknown>) => [...queryKeys.caseStudies.all, 'list', params] as const,
     detail: (id: string) => [...queryKeys.caseStudies.all, 'detail', id] as const,
     slug: (slug: string) => [...queryKeys.caseStudies.all, 'slug', slug] as const,
+  },
+  wishlist: {
+    all: ['wishlist'] as const,
+    list: (params?: Record<string, unknown>) => [...queryKeys.wishlist.all, 'list', params] as const,
+    ids: () => [...queryKeys.wishlist.all, 'ids'] as const,
+  },
+  payments: {
+    all: ['payments'] as const,
+    config: () => [...queryKeys.payments.all, 'config'] as const,
+    list: (params?: Record<string, unknown>) => [...queryKeys.payments.all, 'list', params] as const,
+    detail: (id: string) => [...queryKeys.payments.all, 'detail', id] as const,
   },
 };
 
@@ -485,6 +504,140 @@ export function useSubscribe(
     mutationFn: subscriptionApi.subscribe,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.courses.all });
+    },
+    ...options,
+  });
+}
+
+// ── Wishlist ────────────────────────────────────────────────────────
+
+export function useWishlist(
+  params?: { page?: number; limit?: number },
+  options?: Partial<UseQueryOptions<PaginatedResponse<WishlistEntry>, Error, PaginatedResponse<WishlistEntry>, QueryKey>>
+) {
+  const isAuthenticated = useIsAuthenticated();
+  return useQuery(getQueryOptions(
+    queryKeys.wishlist.list(params),
+    () => wishlistApi.list(params),
+    { enabled: isAuthenticated, ...options }
+  ));
+}
+
+/** Course ids on the wishlist — what the heart buttons read. */
+export function useWishlistIds(
+  options?: Partial<UseQueryOptions<string[], Error, string[], QueryKey>>
+) {
+  const isAuthenticated = useIsAuthenticated();
+  return useQuery(getQueryOptions(
+    queryKeys.wishlist.ids(),
+    () => wishlistApi.ids(),
+    { enabled: isAuthenticated, ...options }
+  ));
+}
+
+export function useToggleWishlist(
+  options?: Partial<UseMutationOptions<{ courseId: string; wishlisted: boolean }, Error, { courseId: string; wishlisted: boolean }, unknown>>
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ courseId, wishlisted }: { courseId: string; wishlisted: boolean }) => {
+      if (wishlisted) await wishlistApi.remove(courseId);
+      else await wishlistApi.add(courseId);
+      return { courseId, wishlisted: !wishlisted };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.wishlist.all });
+    },
+    ...options,
+  });
+}
+
+export function useRemoveFromWishlist(
+  options?: Partial<UseMutationOptions<{ courseId: string; removed: boolean }, Error, string, unknown>>
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (courseId: string) => wishlistApi.remove(courseId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.wishlist.all });
+    },
+    ...options,
+  });
+}
+
+// ── Payments ────────────────────────────────────────────────────────
+
+export function usePaymentConfig(
+  options?: Partial<UseQueryOptions<PaymentConfig, Error, PaymentConfig, QueryKey>>
+) {
+  return useQuery(getQueryOptions(
+    queryKeys.payments.config(),
+    () => paymentApi.config(),
+    options
+  ));
+}
+
+export function useCreateCheckout(
+  options?: Partial<UseMutationOptions<CheckoutResult, Error, CheckoutRequest, unknown>>
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: paymentApi.checkout,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.payments.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.wishlist.all });
+    },
+    ...options,
+  });
+}
+
+export function usePayment(
+  id: string,
+  options?: Partial<UseQueryOptions<PaymentItem, Error, PaymentItem, QueryKey>>
+) {
+  return useQuery(getQueryOptions(
+    queryKeys.payments.detail(id),
+    () => paymentApi.getById(id),
+    { enabled: !!id, staleTime: 0, ...options }
+  ));
+}
+
+export function usePayments(
+  params?: { page?: number; limit?: number },
+  options?: Partial<UseQueryOptions<PaginatedResponse<PaymentItem>, Error, PaginatedResponse<PaymentItem>, QueryKey>>
+) {
+  const isAuthenticated = useIsAuthenticated();
+  return useQuery(getQueryOptions(
+    queryKeys.payments.list(params),
+    () => paymentApi.list(params),
+    { enabled: isAuthenticated, ...options }
+  ));
+}
+
+/** Pulls the live provider status — used while returning from a hosted page. */
+export function useRefreshPayment(
+  options?: Partial<UseMutationOptions<PaymentItem, Error, string, unknown>>
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => paymentApi.refresh(id),
+    onSuccess: (payment) => {
+      queryClient.setQueryData(queryKeys.payments.detail(payment.id), payment);
+    },
+    ...options,
+  });
+}
+
+export function useSandboxDecision(
+  options?: Partial<UseMutationOptions<PaymentItem, Error, { id: string; decision: 'approve' | 'decline' }, unknown>>
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, decision }: { id: string; decision: 'approve' | 'decline' }) =>
+      paymentApi.sandbox(id, decision),
+    onSuccess: (payment) => {
+      queryClient.setQueryData(queryKeys.payments.detail(payment.id), payment);
+      queryClient.invalidateQueries({ queryKey: queryKeys.wishlist.all });
     },
     ...options,
   });

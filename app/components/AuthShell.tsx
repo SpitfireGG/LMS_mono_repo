@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Logo from "./Logo";
@@ -118,7 +119,10 @@ export default function AuthShell({ mode }: { mode: Mode }) {
 
         <div className="flex flex-1 items-center justify-center py-[40px]">
           <div className="w-full max-w-[430px]">
-            <AuthForm mode={mode} />
+            {/* AuthForm reads ?next= to return people to checkout after login. */}
+            <Suspense fallback={<div className="h-[520px] animate-pulse rounded-[18px] bg-[#eef4ee]" />}>
+              <AuthForm mode={mode} />
+            </Suspense>
           </div>
         </div>
 
