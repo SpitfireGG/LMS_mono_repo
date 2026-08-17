@@ -39,6 +39,12 @@ enum PaymentStatus {
   REFUNDED
 }
 
+// ---------- Practice sessions ----------
+enum MockTestKind {
+  MOCK_TEST // exam-style dialogue practice
+  INTERVIEW // real-life mock interview
+}
+
 model User {
   id              String   @id @default(cuid())
   email           String   @unique
@@ -55,6 +61,7 @@ model User {
   enrollments Enrollment[]
   wishlist    WishlistItem[]
   payments    Payment[]
+  attempts    MockTestAttempt[]
 }
 
 model Enrollment {
@@ -166,6 +173,70 @@ model Payment {
   @@index([providerRef])
   @@index([status])
   @@map("payments")
+}
+
+/// A practice session: a PDF (script, question paper or brief) played
+/// alongside its audio or video recording, both uploaded by an admin.
+model MockTest {
+  id          String       @id @default(cuid())
+  slug        String
+  locale      String       @default("en")
+  status      PublishStatus @default(DRAFT)
+  kind        MockTestKind @default(MOCK_TEST)
+  title       String
+  description String?
+  language    String       @default("Nepali") // LOTE paired with English
+  category    String       @default("general") // health | legal | social | education | financial | community | general
+  level       String       @default("All Levels")
+
+  /// Free sessions are the lead magnet — playable without an account.
+  isFree    Boolean @default(false)
+  sortOrder Int     @default(0)
+
+  // --- PDF ---
+  pdfUrl  String?
+  pdfName String?
+  pdfSize Int?
+
+  // --- Audio or video ---
+  mediaUrl      String?
+  mediaName     String?
+  mediaSize     Int?
+  mediaMimeType String?
+  durationSeconds Float?
+
+  publishedAt      DateTime?
+  contentUpdatedAt DateTime  @default(now())
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+
+  attempts MockTestAttempt[]
+
+  @@unique([slug, locale])
+  @@index([status, language, category])
+  @@index([status, sortOrder])
+  @@map("mock_tests")
+}
+
+/// A candidate's recorded run at a practice session. Holds the recording so
+/// scoring or tutor review can be layered on later.
+model MockTestAttempt {
+  id              String   @id @default(cuid())
+  userId          String
+  mockTestId      String
+  recordingUrl    String?
+  recordingSize   Int?
+  durationSeconds Float?
+  notes           String?
+  createdAt       DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mockTest MockTest @relation(fields: [mockTestId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([mockTestId])
+  @@map("mock_test_attempts")
 }
 
 model Testimonial {

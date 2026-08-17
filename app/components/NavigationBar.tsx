@@ -10,6 +10,7 @@ import { authApi } from "@/app/lib/api/client";
 
 const navLinks = [
   { href: "/courses", label: "Courses" },
+  { href: "/practice", label: "Practice" },
   { href: "/about", label: "About" },
   { href: "/#process", label: "How It Works" },
   { href: "/#team", label: "Tutors" },

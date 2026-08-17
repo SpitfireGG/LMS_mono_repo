@@ -166,6 +166,69 @@ export interface WishlistEntry {
   course: CourseItem;
 }
 
+export type MockTestKind = 'MOCK_TEST' | 'INTERVIEW';
+
+export interface MockTestItem {
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  language: string;
+  category: string;
+  level: string;
+  kind: MockTestKind;
+  isFree: boolean;
+  status: PublishStatus;
+  sortOrder: number;
+  durationSeconds: number | null;
+  pdfUrl: string | null;
+  pdfName: string | null;
+  pdfSize: number | null;
+  mediaUrl: string | null;
+  mediaName: string | null;
+  mediaSize: number | null;
+  mediaMimeType: string | null;
+  /** True when the assets are withheld because the visitor is signed out. */
+  locked?: boolean;
+  publishedAt: string | null;
+  contentUpdatedAt: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MockTestFacets {
+  languages: { value: string; count: number }[];
+  categories: { value: string; count: number }[];
+  kinds: { value: string; count: number }[];
+  total: number;
+}
+
+export interface MockTestAttempt {
+  id: string;
+  userId: string;
+  mockTestId: string;
+  recordingUrl: string | null;
+  recordingSize: number | null;
+  durationSeconds: number | null;
+  notes: string | null;
+  createdAt: string;
+  mockTest?: { id: string; slug: string; title: string; language: string };
+}
+
+export interface MockTestInput {
+  title: string;
+  slug?: string;
+  description?: string;
+  language?: string;
+  category?: string;
+  level?: string;
+  kind?: MockTestKind;
+  isFree?: boolean;
+  sortOrder?: number;
+  status?: PublishStatus;
+  durationSeconds?: number;
+}
+
 export interface PaginatedResponse<T> {
   data: T[];
   meta: {

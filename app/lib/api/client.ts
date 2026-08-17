@@ -16,6 +16,12 @@ import type {
   CheckoutRequest,
   PaymentStatusValue,
   WishlistEntry,
+  MockTestItem,
+  MockTestFacets,
+  MockTestAttempt,
+  MockTestInput,
+  MockTestKind,
+  PublishStatus as PublishStatusValue,
 } from './types';
 import { getAccessToken, getSession, updateTokens, clearSession } from '../auth';
 
@@ -463,6 +469,163 @@ export const subscriptionApi = {
       active: boolean;
       createdAt: string;
     }>>('/subscriptions', params),
+};
+
+/**
+ * Turns a stored asset path into an absolute URL. Uploads are served by the
+ * API, which is a different origin from the site in development.
+ */
+export function assetUrl(path?: string | null): string | undefined {
+  if (!path) return undefined;
+  if (/^https?:\/\//i.test(path)) return path;
+  return `${API_BASE}${path.startsWith('/') ? path : `/${path}`}`;
+}
+
+export interface UploadProgress {
+  loaded: number;
+  total: number;
+  percent: number;
+}
+
+/**
+ * Multipart upload with progress. `fetch` can't report upload progress, so
+ * large media goes over XHR instead — the bytes stream straight from disk.
+ */
+function uploadWithProgress<T>(
+  endpoint: string,
+  formData: FormData,
+  options: { method?: 'POST' | 'PATCH'; onProgress?: (p: UploadProgress) => void } = {}
+): Promise<T> {
+  const { method = 'POST', onProgress } = options;
+
+  return new Promise<T>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, `${API_BASE}/api${endpoint}`);
+    xhr.withCredentials = true;
+
+    const token = getAccessToken();
+    if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+    if (onProgress) {
+      xhr.upload.onprogress = (event) => {
+        if (!event.lengthComputable) return;
+        onProgress({
+          loaded: event.loaded,
+          total: event.total,
+          percent: Math.round((event.loaded / event.total) * 100),
+        });
+      };
+    }
+
+    xhr.onload = () => {
+      let payload: unknown;
+      try {
+        payload = JSON.parse(xhr.responseText || '{}');
+      } catch {
+        payload = {};
+      }
+
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(unwrap<T>(payload));
+        return;
+      }
+
+      const message = (payload as { message?: string | string[] })?.message;
+      reject(new Error(
+        (Array.isArray(message) ? message.join(', ') : message) || `Upload failed (${xhr.status})`
+      ));
+    };
+
+    xhr.onerror = () => reject(new Error('Network error during upload'));
+    xhr.onabort = () => reject(new Error('Upload cancelled'));
+
+    xhr.send(formData);
+  });
+}
+
+function toFormData(input: MockTestInput, files: { pdf?: File; media?: File }): FormData {
+  const form = new FormData();
+
+  Object.entries(input).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      form.append(key, String(value));
+    }
+  });
+  if (files.pdf) form.append('pdf', files.pdf);
+  if (files.media) form.append('media', files.media);
+
+  return form;
+}
+
+export const mockTestApi = {
+  list: (params?: {
+    search?: string;
+    language?: string;
+    category?: string;
+    kind?: MockTestKind;
+    page?: number;
+    limit?: number;
+  }) => api.get<PaginatedResponse<MockTestItem>>('/mock-tests', params),
+
+  facets: () => api.get<MockTestFacets>('/mock-tests/facets'),
+
+  getBySlug: (slug: string) => api.get<MockTestItem>(`/mock-tests/slug/${slug}`),
+
+  adminList: (params?: {
+    search?: string;
+    status?: PublishStatusValue;
+    language?: string;
+    kind?: MockTestKind;
+    page?: number;
+    limit?: number;
+  }) => api.get<PaginatedResponse<MockTestItem>>('/mock-tests/admin/all', params),
+
+  create: (
+    input: MockTestInput,
+    files: { pdf?: File; media?: File },
+    onProgress?: (p: UploadProgress) => void
+  ) => uploadWithProgress<MockTestItem>('/mock-tests', toFormData(input, files), { onProgress }),
+
+  update: (
+    id: string,
+    input: Partial<MockTestInput>,
+    files: { pdf?: File; media?: File } = {},
+    onProgress?: (p: UploadProgress) => void
+  ) =>
+    uploadWithProgress<MockTestItem>(
+      `/mock-tests/${id}`,
+      toFormData(input as MockTestInput, files),
+      { method: 'PATCH', onProgress }
+    ),
+
+  remove: (id: string) => api.delete<MockTestItem>(`/mock-tests/${id}`),
+
+  saveAttempt: (
+    mockTestId: string,
+    recording: Blob,
+    meta: { durationSeconds?: number; notes?: string } = {},
+    onProgress?: (p: UploadProgress) => void
+  ) => {
+    const form = new FormData();
+    const extension = recording.type.includes('ogg') ? 'ogg' : 'webm';
+    form.append('recording', recording, `attempt.${extension}`);
+    if (meta.durationSeconds !== undefined) {
+      form.append('durationSeconds', String(Math.round(meta.durationSeconds)));
+    }
+    if (meta.notes) form.append('notes', meta.notes);
+
+    return uploadWithProgress<MockTestAttempt>(
+      `/mock-tests/${mockTestId}/attempts`,
+      form,
+      { onProgress }
+    );
+  },
+
+  myAttempts: (mockTestId?: string) =>
+    api.get<MockTestAttempt[]>('/mock-tests/attempts/mine', { mockTestId }),
+
+  deleteAttempt: (attemptId: string) =>
+    api.delete<{ id: string; removed: boolean }>(`/mock-tests/attempts/${attemptId}`),
 };
 
 export const wishlistApi = {
