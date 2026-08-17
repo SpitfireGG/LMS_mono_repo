@@ -1,0 +1,341 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- SEO enums ----------
+enum PublishStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  ARCHIVED // -> 404 or 301
+  DELETED // -> 410 Gone
+}
+
+enum RedirectType {
+  PERMANENT // 301
+  TEMPORARY // 302
+  GONE // 410
+}
+
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  name            String
+  password        String?
+  role            String   @default("student") // student | admin
+  image           String?
+  googleId        String?  @unique
+  isEmailVerified Boolean  @default(false)
+  refreshToken    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  enrollments Enrollment[]
+}
+
+model Enrollment {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId   String
+  progress  Float    @default(0) // 0..100
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+}
+
+model Course {
+  id            String   @id @default(cuid())
+  slug          String
+  locale        String        @default("en")
+  status        PublishStatus @default(PUBLISHED)
+  category      String // test | lang | tech | biz | design
+  tag           String
+  title         String
+  author        String
+  level         String // Beginner | Intermediate | All Levels
+  lessons       Int
+  hours         Float
+  students      Int      @default(0)
+  rating        Float    @default(0)
+  price         Float
+  originalPrice Float?
+  tone          String   @default("dark") // dark | lime | grey
+  glyph         String   @default("test")
+  image         String?
+  description   String?
+
+  // --- SEO block ---
+  metaTitle       String?    @db.VarChar(70)
+  metaDescription String?    @db.VarChar(160)
+  canonicalUrl    String?
+  noindex         Boolean    @default(false)
+  nofollow        Boolean    @default(false)
+  ogImageUrl      String?
+  ogImageAlt      String?
+  structuredData  Json?
+
+  // --- Lifecycle ---
+  publishedAt      DateTime?
+  contentUpdatedAt DateTime  @default(now())
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+
+  enrollments Enrollment[]
+
+  @@unique([slug, locale])
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([status, contentUpdatedAt(sort: Desc)])
+  @@map("courses")
+}
+
+model Testimonial {
+  id              String         @id @default(cuid())
+  slug            String
+  locale          String         @default("en")
+  quote           String
+  authorName      String
+  authorTitle     String
+  avatar          String?
+  featured        Boolean        @default(false)
+  sortOrder       Int            @default(0)
+  status          PublishStatus  @default(PUBLISHED)
+  publishedAt     DateTime?
+  contentUpdatedAt DateTime      @default(now())
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  deletedAt       DateTime?
+
+  @@unique([slug, locale])
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([status, contentUpdatedAt(sort: Desc)])
+}
+
+model BlogPost {
+  id        String @id @default(cuid())
+  slug      String
+  locale    String        @default("en")
+  status    PublishStatus @default(PUBLISHED)
+  tag       String
+  readTime  String  @default("5 min read")
+  title     String
+  excerpt   String
+  content   String?
+  coverImage String?
+  author    String?
+
+  // --- SEO block ---
+  metaTitle       String?    @db.VarChar(70)
+  metaDescription String?    @db.VarChar(160)
+  canonicalUrl    String?
+  noindex         Boolean    @default(false)
+  nofollow        Boolean    @default(false)
+  ogImageUrl      String?
+  ogImageAlt      String?
+  structuredData  Json?
+
+  // --- Lifecycle ---
+  publishedAt      DateTime?
+  contentUpdatedAt DateTime  @default(now())
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+
+  @@unique([slug, locale])
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([status, contentUpdatedAt(sort: Desc)])
+  @@map("blog_posts")
+}
+
+model TeamMember {
+  id              String         @id @default(cuid())
+  slug            String
+  locale          String         @default("en")
+  name            String
+  role            String
+  bio             String?
+  image           String?
+  category        String         @default("tutor")
+  sortOrder       Int            @default(0)
+  status          PublishStatus  @default(PUBLISHED)
+  publishedAt     DateTime?
+  contentUpdatedAt DateTime      @default(now())
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  deletedAt       DateTime?
+
+  @@unique([slug, locale])
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([status, contentUpdatedAt(sort: Desc)])
+}
+
+model Service {
+  id              String         @id @default(cuid())
+  slug            String
+  locale          String         @default("en")
+  title           String
+  body            String
+  icon            String
+  category        String         @default("course")
+  sortOrder       Int            @default(0)
+  status          PublishStatus  @default(PUBLISHED)
+  publishedAt     DateTime?
+  contentUpdatedAt DateTime      @default(now())
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  deletedAt       DateTime?
+
+  @@unique([slug, locale])
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([status, contentUpdatedAt(sort: Desc)])
+}
+
+model FAQ {
+  id              String         @id @default(cuid())
+  slug            String
+  locale          String         @default("en")
+  question        String
+  answer          String
+  category        String         @default("general")
+  sortOrder       Int            @default(0)
+  status          PublishStatus  @default(PUBLISHED)
+  publishedAt     DateTime?
+  contentUpdatedAt DateTime      @default(now())
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  deletedAt       DateTime?
+
+  @@unique([slug, locale])
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([status, contentUpdatedAt(sort: Desc)])
+}
+
+model CaseStudy {
+  id        String @id @default(cuid())
+  slug      String
+  locale    String        @default("en")
+  status    PublishStatus @default(PUBLISHED)
+  title     String
+  excerpt   String
+  content   String?
+  image     String?
+  result    String?
+  tags      String   @default("")
+  sortOrder Int      @default(0)
+
+  // --- SEO block ---
+  metaTitle       String?    @db.VarChar(70)
+  metaDescription String?    @db.VarChar(160)
+  canonicalUrl    String?
+  noindex         Boolean    @default(false)
+  nofollow        Boolean    @default(false)
+  ogImageUrl      String?
+  ogImageAlt      String?
+  structuredData  Json?
+
+  // --- Lifecycle ---
+  publishedAt      DateTime?
+  contentUpdatedAt DateTime  @default(now())
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+
+  @@unique([slug, locale])
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([status, contentUpdatedAt(sort: Desc)])
+  @@map("case_studies")
+}
+
+model Announcement {
+  id              String         @id @default(cuid())
+  slug            String
+  locale          String         @default("en")
+  text            String
+  link            String?
+  linkText        String?
+  status          PublishStatus  @default(PUBLISHED)
+  publishedAt     DateTime?
+  contentUpdatedAt DateTime      @default(now())
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  deletedAt       DateTime?
+
+  @@unique([slug, locale])
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([status, contentUpdatedAt(sort: Desc)])
+}
+
+model ContactSubmission {
+  id               String   @id @default(cuid())
+  enquiryType      String
+  firstName        String
+  lastName         String
+  email            String
+  phone            String?
+  courseOfInterest String?
+  preferredContact String   @default("Email")
+  message          String
+  consented        Boolean  @default(false)
+  replied          Boolean  @default(false)
+  createdAt        DateTime @default(now())
+}
+
+model VerificationToken {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  type      String   // "email_verify" | "password_reset"
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([token])
+}
+
+model Subscription {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+// ---------- Slug history: the reason old links never break ----------
+model SlugHistory {
+  id         String   @id @default(cuid())
+  entityType String // "BlogPost" | "Course" | "CaseStudy"
+  entityId   String
+  slug       String
+  locale     String   @default("en")
+  createdAt  DateTime @default(now())
+
+  @@unique([entityType, slug, locale])
+  @@index([entityId])
+  @@map("slug_history")
+}
+
+// ---------- Manual + generated redirects ----------
+model Redirect {
+  id          String       @id @default(cuid())
+  source      String // normalized path, e.g. "/blog/old-slug"
+  destination String // path or absolute URL
+  type        RedirectType @default(PERMANENT)
+  isActive    Boolean      @default(true)
+  hitCount    Int          @default(0)
+  lastHitAt   DateTime?
+  note        String?
+  createdAt   DateTime     @default(now())
+
+  @@unique([source])
+  @@index([isActive, source])
+  @@map("redirects")
+}

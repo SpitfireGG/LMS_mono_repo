@@ -1,0 +1,241 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f7faf6;
+  --foreground: #0a4a29;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-space-grotesk: var(--font-space-grotesk);
+
+  /* ── Brand identity: NAATI green (sampled from the logo) ───── */
+  /* Deep — the readable/clickable green (white text ≥6.9:1)      */
+  --color-deep: #056839;
+  --color-deep-2: #0a4a29; /* darker press/hover; also body ink   */
+  /* Ink — deepest green-black for body copy (≥10:1 on white)     */
+  --color-ink: #0a4a29;
+  --color-ink-2: #0d5e34;
+  /* Signature — surface & accent ONLY, never text on white       */
+  --color-signature: #50bc7e;
+  --color-signature-2: #31a46b; /* hover for signature fills      */
+  /* Mist — the light brand surface                               */
+  --color-mist: #e8f6ee;
+  --color-mist-2: #d7efe1;
+
+  /* Neutrals — warm-leaning canvas (reads better against green)  */
+  --color-bg: #f7faf6;
+  --color-surface: #eef4ee;
+  --color-line: #dbe6dd;
+  --color-muted: #566b5d; /* ≥4.5:1 on bg, surface and mist       */
+
+  /* ── Elevation — soft, layered, green-tinted (no hard offsets) */
+  --shadow-e1: 0 1px 2px rgba(10, 74, 41, 0.04), 0 6px 16px -8px rgba(10, 74, 41, 0.14);
+  --shadow-e2: 0 2px 6px rgba(10, 74, 41, 0.05), 0 18px 40px -18px rgba(10, 74, 41, 0.2);
+  --shadow-e3: 0 6px 14px rgba(10, 74, 41, 0.06), 0 34px 60px -26px rgba(10, 74, 41, 0.28);
+  --shadow-lift: 0 10px 24px rgba(10, 74, 41, 0.08), 0 40px 70px -28px rgba(10, 74, 41, 0.32);
+  --shadow-ring: 0 0 0 1px rgba(10, 74, 41, 0.06);
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--background);
+  color: #0a4a29;
+  font-family: var(--font-space-grotesk), "Space Grotesk", Arial, Helvetica, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: #50bc7e;
+  color: #ffffff;
+}
+
+h1, h2, h3 {
+  text-wrap: balance;
+  letter-spacing: -0.02em;
+}
+
+.text-pretty { text-wrap: pretty; }
+
+/* ── Marker highlight — echoes the logo's green ribbon ───────── */
+.marker {
+  background: linear-gradient(180deg, #0f8f99 0%, #0e7c86 100%);
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 0.05em 0.34em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.marker-ink {
+  background: #0a4a29;
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 0.05em 0.34em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+/* Signature underline — an alternate, lighter emphasis */
+.underline-brand {
+  background-image: linear-gradient(120deg, #50bc7e, #50bc7e);
+  background-repeat: no-repeat;
+  background-position: 0 88%;
+  background-size: 100% 0.28em;
+  border-radius: 2px;
+}
+
+/* ── Concentric-ring backdrop — brand motif (hero, CTA) ──────── */
+.rings {
+  background:
+    radial-gradient(circle, transparent 0 60px, rgba(255, 255, 255, 0.06) 60px 61px, transparent 61px),
+    radial-gradient(circle, transparent 0 120px, rgba(255, 255, 255, 0.05) 120px 121px, transparent 121px),
+    radial-gradient(circle, transparent 0 190px, rgba(255, 255, 255, 0.045) 190px 191px, transparent 191px),
+    radial-gradient(circle, transparent 0 270px, rgba(255, 255, 255, 0.04) 270px 271px, transparent 271px),
+    radial-gradient(circle, transparent 0 360px, rgba(255, 255, 255, 0.03) 360px 361px, transparent 361px);
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.rings-ink {
+  background:
+    radial-gradient(circle, transparent 0 70px, rgba(10, 74, 41, 0.06) 70px 71px, transparent 71px),
+    radial-gradient(circle, transparent 0 140px, rgba(10, 74, 41, 0.05) 140px 141px, transparent 141px),
+    radial-gradient(circle, transparent 0 220px, rgba(10, 74, 41, 0.04) 220px 221px, transparent 221px),
+    radial-gradient(circle, transparent 0 310px, rgba(10, 74, 41, 0.03) 310px 311px, transparent 311px);
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* ── Chat button attention ring ─────────────────────────────── */
+@keyframes chatPulse {
+  0% { transform: scale(1); opacity: 0.5; }
+  70%, 100% { transform: scale(1.7); opacity: 0; }
+}
+.chat-pulse {
+  animation: chatPulse 2.6s var(--ease-out-quint) infinite;
+}
+
+/* ── Logos strip ─────────────────────────────────────────────── */
+@keyframes scrollFlags {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-scroll-flags {
+  animation: scrollFlags 30s linear infinite;
+}
+
+/* ── Hero entrance choreography ──────────────────────────────── */
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(26px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rise-in {
+  animation: riseIn 0.9s var(--ease-out-quint) both;
+}
+.rise-in-1 { animation-delay: 0.05s; }
+.rise-in-2 { animation-delay: 0.16s; }
+.rise-in-3 { animation-delay: 0.27s; }
+.rise-in-4 { animation-delay: 0.38s; }
+.rise-in-5 { animation-delay: 0.49s; }
+
+@keyframes sceneIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.scene-in {
+  animation: sceneIn 1.1s var(--ease-out-quint) 0.25s both;
+}
+
+/* ── 3D scene primitives ─────────────────────────────────────── */
+.scene {
+  perspective: 1600px;
+  perspective-origin: 50% 38%;
+}
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+@keyframes cardFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+.card-float {
+  animation: cardFloat 7s ease-in-out infinite;
+}
+@keyframes cardFloatAlt {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+.card-float-alt {
+  animation: cardFloatAlt 8.5s ease-in-out 0.8s infinite;
+}
+
+/* Glossy green orb — 3D brand accent shared by hero, CTA & contact */
+.orb-brand {
+  background:
+    radial-gradient(circle at 32% 26%, #c7f0d8 0%, #50bc7e 42%, #056839 72%, #0a4a29 100%);
+  box-shadow:
+    inset 0 3px 6px rgba(255, 255, 255, 0.6),
+    inset 0 -8px 16px rgba(10, 74, 41, 0.7),
+    0 14px 28px -12px rgba(5, 104, 57, 0.55);
+}
+.orb-ink {
+  background:
+    radial-gradient(circle at 32% 26%, #2f6b4c 0%, #0f4f30 55%, #06321e 100%);
+  box-shadow:
+    inset 0 2px 4px rgba(255, 255, 255, 0.3),
+    inset 0 -6px 12px rgba(0, 0, 0, 0.5),
+    0 12px 24px -10px rgba(10, 74, 41, 0.55);
+}
+
+/* Atmospheric backdrop behind the hero scene */
+.hero-atmosphere {
+  background:
+    radial-gradient(52% 46% at 68% 40%, rgba(80, 188, 126, 0.3), transparent 70%),
+    radial-gradient(40% 38% at 26% 74%, rgba(5, 104, 57, 0.14), transparent 70%);
+}
+
+/* ── Interactive cards — soft raise, not hard offset ─────────── */
+.lift {
+  transition:
+    transform 0.4s var(--ease-out-quint),
+    box-shadow 0.4s var(--ease-out-quint);
+  will-change: transform;
+}
+.lift:hover {
+  transform: translateY(-7px);
+  box-shadow: var(--shadow-lift);
+}
+
+/* Reusable soft card + pill primitives */
+.card-soft {
+  background: #ffffff;
+  border: 1px solid var(--color-line);
+  box-shadow: var(--shadow-e2);
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-line);
+  background: #ffffff;
+  padding: 0.4rem 0.85rem;
+  font-weight: 500;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
