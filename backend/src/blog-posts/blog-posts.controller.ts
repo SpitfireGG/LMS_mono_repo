@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { BlogPostsService } from "./blog-posts.service";
-import { CreateBlogPostDto, UpdateBlogPostDto } from "./dto/blog-post.dto";
+import { CreateBlogPostDto, UpdateBlogPostDto, QueryBlogPostDto } from "./dto/blog-post.dto";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import { RolesGuard } from "../common/guards/roles.guard";
 import { Roles } from "../common/decorators/roles.decorator";
@@ -13,7 +13,7 @@ export class BlogPostsController {
   constructor(private readonly service: BlogPostsService) {}
 
   @Public() @Get() @ApiOperation({ summary: "List published blog posts" })
-  findAll() { return this.service.findAll(); }
+  findAll(@Query() query: QueryBlogPostDto) { return this.service.findAll(query); }
 
   @Public() @Get("slug/:slug") @ApiOperation({ summary: "Get by slug" })
   findBySlug(@Param("slug") slug: string) { return this.service.findBySlug(slug); }

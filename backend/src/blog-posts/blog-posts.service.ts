@@ -5,8 +5,9 @@ import {
   GoneException,
 } from "@nestjs/common";
 import { PublishStatus } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
-import { CreateBlogPostDto, UpdateBlogPostDto } from "./dto/blog-post.dto";
+import { CreateBlogPostDto, UpdateBlogPostDto, QueryBlogPostDto } from "./dto/blog-post.dto";
 import { SlugService } from "../seo/services/slug.service";
 import { RedirectService } from "../seo/services/redirect.service";
 import { SeoMeta, SeoMetaService } from "../seo/services/seo-meta.service";
@@ -56,11 +57,42 @@ export class BlogPostsService {
     });
   }
 
-  async findAll() {
-    return this.prisma.blogPost.findMany({
-      where: { status: PublishStatus.PUBLISHED, deletedAt: null },
-      orderBy: { publishedAt: "desc" },
-    });
+  async findAll(query: QueryBlogPostDto) {
+    const where: any = {
+      status: PublishStatus.PUBLISHED,
+      deletedAt: null,
+    };
+
+    if (query.tag) where.tag = query.tag;
+    if (query.search) {
+      where.OR = [
+        { title: { contains: query.search, mode: "insensitive" } },
+        { excerpt: { contains: query.search, mode: "insensitive" } },
+        { content: { contains: query.search, mode: "insensitive" } },
+      ];
+    }
+
+    const orderBy: Prisma.BlogPostOrderByWithRelationInput = query.sortBy
+      ? { [query.sortBy]: query.sortOrder ?? "desc" }
+      : { publishedAt: "desc" };
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 12;
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      this.prisma.blogPost.findMany({ where, orderBy, skip, take: limit }),
+      this.prisma.blogPost.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async adminFindAll() {

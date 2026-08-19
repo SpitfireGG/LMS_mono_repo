@@ -8,6 +8,9 @@ import {
 } from "class-validator";
 import { PublishStatus } from "@prisma/client";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { BaseQueryDto } from "../../common/dto/base-query.dto";
+
+export class QueryCaseStudyDto extends BaseQueryDto {}
 
 export class CreateCaseStudyDto {
   @ApiProperty() @IsString() title: string;

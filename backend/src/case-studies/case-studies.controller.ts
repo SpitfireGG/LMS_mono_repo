@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { CaseStudiesService } from "./case-studies.service";
-import { CreateCaseStudyDto, UpdateCaseStudyDto } from "./dto/case-study.dto";
+import { CreateCaseStudyDto, UpdateCaseStudyDto, QueryCaseStudyDto } from "./dto/case-study.dto";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import { RolesGuard } from "../common/guards/roles.guard";
 import { Roles } from "../common/decorators/roles.decorator";
@@ -13,7 +13,7 @@ export class CaseStudiesController {
   constructor(private readonly service: CaseStudiesService) {}
 
   @Public() @Get() @ApiOperation({ summary: "List published case studies" })
-  findAll() { return this.service.findAll(); }
+  findAll(@Query() query: QueryCaseStudyDto) { return this.service.findAll(query); }
 
   @Public() @Get("slug/:slug") @ApiOperation({ summary: "Get a case study by slug" })
   findBySlug(@Param("slug") slug: string) { return this.service.findBySlug(slug); }

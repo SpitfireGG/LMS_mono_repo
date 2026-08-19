@@ -7,8 +7,7 @@ const flags: Record<string, string> = {
     '<rect width="34" height="8" fill="#ff9933"/><rect y="8" width="34" height="8" fill="#fff"/><rect y="16" width="34" height="8" fill="#138808"/><circle cx="17" cy="12" r="2.4" fill="none" stroke="#0a3b8c" stroke-width="1"/>',
   China:
     '<rect width="34" height="24" fill="#de2910"/><path d="M7 5l1 2.4 2.4.1-1.9 1.5.7 2.3L7 10l-2.2 1.4.7-2.3L3.6 7.5 6 7.4 7 5Z" fill="#ffde00"/><circle cx="13" cy="4" r=".9" fill="#ffde00"/><circle cx="15" cy="7" r=".9" fill="#ffde00"/><circle cx="15" cy="11" r=".9" fill="#ffde00"/><circle cx="13" cy="14" r=".9" fill="#ffde00"/>',
-  Nepal:
-    '<rect width="34" height="24" fill="#003893"/><path d="M2 2h18l-10 9h8l-12 11V2Z" fill="#dc143c" stroke="#fff" stroke-width="1.2"/>',
+  Nepal: "",
   Vietnam:
     '<rect width="34" height="24" fill="#da251d"/><path d="M17 6l1.5 4.5H23l-3.7 2.8 1.4 4.5L17 15l-3.7 2.8 1.4-4.5L11 10.5h4.5L17 6Z" fill="#ff0"/>',
   Iran: '<rect width="34" height="8" fill="#239f40"/><rect y="8" width="34" height="8" fill="#fff"/><rect y="16" width="34" height="8" fill="#da0000"/>',
@@ -28,17 +27,54 @@ const flags: Record<string, string> = {
 
 const flagNames = Object.keys(flags);
 
+function NepalFlag() {
+  return (
+    <svg
+      viewBox="0 0 24 28"
+      width="21"
+      height="24"
+      role="img"
+      aria-label="Flag of Nepal"
+      className="drop-shadow-[0_0_0.5px_rgba(0,0,0,0.25)]"
+    >
+      {/* Nepal's constitutional double-pennant silhouette and blue border. */}
+      <path d="M1 1v26h22L11.2 16H23L1 1Z" fill="#003893" />
+      <path d="M2.5 4v21.5h16.7L7.4 14.7h11.2L2.5 4Z" fill="#DC143C" />
+
+      {/* Crescent moon with its rays. */}
+      <g fill="#fff">
+        <path d="M5.15 9.55a3.2 3.2 0 0 0 5.95 0 3.8 3.8 0 0 1-5.95 0Z" />
+        <path d="m8.12 5.25.42 1.15 1.08-.58-.45 1.13 1.2.22-1.08.56.82.91-1.19-.24.05 1.22-.8-.93-.75.96.01-1.22-1.18.29.79-.94-1.1-.52 1.19-.26-.49-1.11 1.1.54.38-1.16Z" />
+      </g>
+
+      {/* Twelve-rayed sun. */}
+      <g fill="#fff" transform="translate(8.15 20.55)">
+        <circle r="2.05" />
+        <path d="M0-3.65.45-2.3-.45-2.3ZM0 3.65.45 2.3-.45 2.3ZM-3.65 0l1.35-.45v.9ZM3.65 0l-1.35-.45v.9ZM-2.58-2.58l1.28.64-.64.64ZM2.58 2.58l-1.28-.64.64-.64ZM2.58-2.58l-.64 1.28-.64-.64ZM-2.58 2.58l.64-1.28.64.64ZM-1.82-3.16l1.06 1.03-.78.45ZM1.82 3.16.76 2.13l.78-.45ZM1.82-3.16l-.28 1.45-.78-.45ZM-1.82 3.16l.28-1.45.78.45Z" />
+      </g>
+    </svg>
+  );
+}
+
 function FlagItem({ name }: { name: string }) {
   return (
     <div className="flex items-center gap-[10px] font-medium text-[16px] text-[#4A382C] whitespace-nowrap shrink-0 mx-[23px]">
-      <div className="w-[34px] h-[24px] rounded-[5px] shadow-[0_0_0_1px_#ECDFCD] overflow-hidden shrink-0">
-        <svg
-          viewBox="0 0 34 24"
-          width="34"
-          height="24"
-          dangerouslySetInnerHTML={{ __html: flags[name] }}
-        />
-      </div>
+      {name === "Nepal" ? (
+        <div className="flex h-[24px] w-[34px] shrink-0 items-center justify-center">
+          <NepalFlag />
+        </div>
+      ) : (
+        <div className="w-[34px] h-[24px] rounded-[5px] shadow-[0_0_0_1px_#ECDFCD] overflow-hidden shrink-0">
+          <svg
+            viewBox="0 0 34 24"
+            width="34"
+            height="24"
+            role="img"
+            aria-label={`Flag of ${name}`}
+            dangerouslySetInnerHTML={{ __html: flags[name] }}
+          />
+        </div>
+      )}
       <span>{name}</span>
     </div>
   );

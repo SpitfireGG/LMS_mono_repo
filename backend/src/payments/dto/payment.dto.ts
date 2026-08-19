@@ -50,6 +50,7 @@ export class CardDetailsDto {
 export class CreateCheckoutDto {
   @ApiProperty({ example: "ccl-nepali" })
   @IsString()
+  @Length(1, 64)
   courseId: string;
 
   @ApiProperty({ enum: PaymentProvider, example: PaymentProvider.STRIPE })
@@ -62,6 +63,7 @@ export class CreateCheckoutDto {
   })
   @IsOptional()
   @IsString()
+  @Length(3, 255)
   paymentMethodId?: string;
 
   @ApiPropertyOptional({ type: CardDetailsDto })
@@ -72,11 +74,13 @@ export class CreateCheckoutDto {
 
   @ApiPropertyOptional({ description: "Where to send the customer once the payment completes" })
   @IsOptional()
+  @Length(1, 2048)
   @IsUrl({ require_tld: false })
   successUrl?: string;
 
   @ApiPropertyOptional({ description: "Where to send the customer if they abandon the payment" })
   @IsOptional()
+  @Length(1, 2048)
   @IsUrl({ require_tld: false })
   cancelUrl?: string;
 }

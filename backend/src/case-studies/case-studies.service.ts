@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException, ConflictException, GoneException } from "@nestjs/common";
 import { PublishStatus } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
-import { CreateCaseStudyDto, UpdateCaseStudyDto } from "./dto/case-study.dto";
+import { CreateCaseStudyDto, UpdateCaseStudyDto, QueryCaseStudyDto } from "./dto/case-study.dto";
 import { SlugService } from "../seo/services/slug.service";
 import { RedirectService } from "../seo/services/redirect.service";
 import { SeoMeta, SeoMetaService } from "../seo/services/seo-meta.service";
@@ -51,11 +52,41 @@ export class CaseStudiesService {
     });
   }
 
-  async findAll() {
-    return this.prisma.caseStudy.findMany({
-      where: { status: PublishStatus.PUBLISHED, deletedAt: null },
-      orderBy: { sortOrder: "asc" },
-    });
+  async findAll(query: QueryCaseStudyDto) {
+    const where: any = {
+      status: PublishStatus.PUBLISHED,
+      deletedAt: null,
+    };
+
+    if (query.search) {
+      where.OR = [
+        { title: { contains: query.search, mode: "insensitive" } },
+        { excerpt: { contains: query.search, mode: "insensitive" } },
+        { content: { contains: query.search, mode: "insensitive" } },
+      ];
+    }
+
+    const orderBy: Prisma.CaseStudyOrderByWithRelationInput = query.sortBy
+      ? { [query.sortBy]: query.sortOrder ?? "desc" }
+      : { sortOrder: "asc" };
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 12;
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      this.prisma.caseStudy.findMany({ where, orderBy, skip, take: limit }),
+      this.prisma.caseStudy.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async adminFindAll() {

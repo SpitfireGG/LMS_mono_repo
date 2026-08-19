@@ -28,6 +28,7 @@ export class CreateMockTestDto {
   @ApiPropertyOptional({ example: "medical-consultation-endoscopy" })
   @IsOptional()
   @IsString()
+  @Length(3, 200)
   slug?: string;
 
   @ApiPropertyOptional()
@@ -39,16 +40,19 @@ export class CreateMockTestDto {
   @ApiPropertyOptional({ example: "Nepali" })
   @IsOptional()
   @IsString()
+  @Length(2, 64)
   language?: string;
 
   @ApiPropertyOptional({ example: "health" })
   @IsOptional()
   @IsString()
+  @Length(2, 64)
   category?: string;
 
   @ApiPropertyOptional({ example: "All Levels" })
   @IsOptional()
   @IsString()
+  @Length(2, 64)
   level?: string;
 
   @ApiPropertyOptional({ enum: MockTestKind, default: MockTestKind.MOCK_TEST })
@@ -78,6 +82,7 @@ export class CreateMockTestDto {
   @Type(() => Number)
   @IsNumber()
   @Min(0)
+  @Max(86_400)
   durationSeconds?: number;
 }
 
@@ -91,6 +96,7 @@ export class UpdateMockTestDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  @Length(3, 200)
   slug?: string;
 
   @ApiPropertyOptional()
@@ -102,16 +108,19 @@ export class UpdateMockTestDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  @Length(2, 64)
   language?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  @Length(2, 64)
   category?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  @Length(2, 64)
   level?: string;
 
   @ApiPropertyOptional({ enum: MockTestKind })
@@ -141,6 +150,7 @@ export class UpdateMockTestDto {
   @Type(() => Number)
   @IsNumber()
   @Min(0)
+  @Max(86_400)
   durationSeconds?: number;
 }
 
@@ -148,16 +158,19 @@ export class QueryMockTestDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  @Length(1, 200)
   search?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  @Length(2, 64)
   language?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  @Length(2, 64)
   category?: string;
 
   @ApiPropertyOptional({ enum: MockTestKind })
@@ -192,6 +205,7 @@ export class CreateAttemptDto {
   @Type(() => Number)
   @IsNumber()
   @Min(0)
+  @Max(86_400)
   durationSeconds?: number;
 
   @ApiPropertyOptional()

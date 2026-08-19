@@ -57,26 +57,26 @@ export default function ServiceCard({
   return (
     <div
       className={cn(
-        "lift border border-[#cfe3d6] border-solid flex items-center justify-between gap-[10px] overflow-clip p-[49px] max-xl:p-[35px] relative rounded-[45px] shadow-[var(--shadow-e2)] shrink-0 w-full",
+        "lift border border-[#cfe3d6] border-solid flex min-h-[280px] items-center justify-between gap-[24px] overflow-clip p-[49px] max-xl:p-[35px] max-sm:min-h-0 max-sm:items-end max-sm:gap-[12px] max-sm:p-[24px] relative rounded-[45px] max-sm:rounded-[28px] shadow-[var(--shadow-e2)] shrink-0 w-full",
         className
       )}
       style={{ backgroundColor }}
       data-name="Card"
     >
       <div
-        className="flex flex-col gap-[93px] max-xl:gap-[60px] items-start justify-center relative shrink-0"
+        className="flex min-w-0 flex-col gap-[72px] max-xl:gap-[52px] max-sm:gap-[36px] items-start justify-center relative"
         data-name="Heading and link"
       >
         <Heading
           lines={lines}
           variant={headingVariant}
-          headingClassName="text-[30px]/[1.27] max-xl:text-[25px]/[1.27]"
+          headingClassName="text-[30px]/[1.27] max-xl:text-[25px]/[1.27] max-sm:text-[21px]/[1.3]"
           as="h3"
         />
         <LearnMoreLink variant={linkVariant} />
       </div>
       <div
-        className="relative shrink-0 flex-1 max-w-[230px] max-sm:max-w-[180px] self-center"
+        className="relative w-[42%] max-w-[230px] shrink-0 self-center max-sm:w-[38%] max-sm:max-w-[150px]"
         data-name="Illustration"
       >
         {glyph}
