@@ -19,19 +19,33 @@ import {
   caseStudyApi,
   contactApi,
   subscriptionApi,
+  wishlistApi,
+  paymentApi,
+  mockTestApi,
 } from './client';
-import type { 
-  CourseItem, 
-  BlogPostItem, 
-  TestimonialItem, 
-  FAQItem, 
-  ServiceItem, 
-  TeamMemberItem, 
-  AnnouncementItem, 
+import type {
+  CourseItem,
+  BlogPostItem,
+  TestimonialItem,
+  FAQItem,
+  ServiceItem,
+  TeamMemberItem,
+  AnnouncementItem,
   CaseStudyItem,
   PaginatedResponse,
   PublishStatus,
+  WishlistEntry,
+  PaymentItem,
+  PaymentConfig,
+  CheckoutRequest,
+  CheckoutResult,
+  MockTestItem,
+  MockTestFacets,
+  MockTestAttempt,
+  MockTestInput,
+  MockTestKind,
 } from './types';
+import { useIsAuthenticated } from '../auth';
 
 const STALE_TIME = 5 * 60 * 1000;
 const GC_TIME = 10 * 60 * 1000;
@@ -85,6 +99,25 @@ export const queryKeys = {
     list: (params?: Record<string, unknown>) => [...queryKeys.caseStudies.all, 'list', params] as const,
     detail: (id: string) => [...queryKeys.caseStudies.all, 'detail', id] as const,
     slug: (slug: string) => [...queryKeys.caseStudies.all, 'slug', slug] as const,
+  },
+  wishlist: {
+    all: ['wishlist'] as const,
+    list: (params?: Record<string, unknown>) => [...queryKeys.wishlist.all, 'list', params] as const,
+    ids: () => [...queryKeys.wishlist.all, 'ids'] as const,
+  },
+  payments: {
+    all: ['payments'] as const,
+    config: () => [...queryKeys.payments.all, 'config'] as const,
+    list: (params?: Record<string, unknown>) => [...queryKeys.payments.all, 'list', params] as const,
+    detail: (id: string) => [...queryKeys.payments.all, 'detail', id] as const,
+  },
+  mockTests: {
+    all: ['mockTests'] as const,
+    list: (params?: Record<string, unknown>) => [...queryKeys.mockTests.all, 'list', params] as const,
+    adminList: (params?: Record<string, unknown>) => [...queryKeys.mockTests.all, 'admin', params] as const,
+    facets: () => [...queryKeys.mockTests.all, 'facets'] as const,
+    slug: (slug: string) => [...queryKeys.mockTests.all, 'slug', slug] as const,
+    attempts: (mockTestId?: string) => [...queryKeys.mockTests.all, 'attempts', mockTestId ?? 'all'] as const,
   },
 };
 
@@ -485,6 +518,297 @@ export function useSubscribe(
     mutationFn: subscriptionApi.subscribe,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.courses.all });
+    },
+    ...options,
+  });
+}
+
+// ── Wishlist ────────────────────────────────────────────────────────
+
+export function useWishlist(
+  params?: { page?: number; limit?: number },
+  options?: Partial<UseQueryOptions<PaginatedResponse<WishlistEntry>, Error, PaginatedResponse<WishlistEntry>, QueryKey>>
+) {
+  const isAuthenticated = useIsAuthenticated();
+  return useQuery(getQueryOptions(
+    queryKeys.wishlist.list(params),
+    () => wishlistApi.list(params),
+    { enabled: isAuthenticated, ...options }
+  ));
+}
+
+/** Course ids on the wishlist — what the heart buttons read. */
+export function useWishlistIds(
+  options?: Partial<UseQueryOptions<string[], Error, string[], QueryKey>>
+) {
+  const isAuthenticated = useIsAuthenticated();
+  return useQuery(getQueryOptions(
+    queryKeys.wishlist.ids(),
+    () => wishlistApi.ids(),
+    { enabled: isAuthenticated, ...options }
+  ));
+}
+
+export function useToggleWishlist(
+  options?: Partial<UseMutationOptions<{ courseId: string; wishlisted: boolean }, Error, { courseId: string; wishlisted: boolean }, unknown>>
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ courseId, wishlisted }: { courseId: string; wishlisted: boolean }) => {
+      if (wishlisted) await wishlistApi.remove(courseId);
+      else await wishlistApi.add(courseId);
+      return { courseId, wishlisted: !wishlisted };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.wishlist.all });
+    },
+    ...options,
+  });
+}
+
+export function useRemoveFromWishlist(
+  options?: Partial<UseMutationOptions<{ courseId: string; removed: boolean }, Error, string, unknown>>
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (courseId: string) => wishlistApi.remove(courseId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.wishlist.all });
+    },
+    ...options,
+  });
+}
+
+// ── Payments ────────────────────────────────────────────────────────
+
+export function usePaymentConfig(
+  options?: Partial<UseQueryOptions<PaymentConfig, Error, PaymentConfig, QueryKey>>
+) {
+  return useQuery(getQueryOptions(
+    queryKeys.payments.config(),
+    () => paymentApi.config(),
+    options
+  ));
+}
+
+export function useCreateCheckout(
+  options?: Partial<UseMutationOptions<CheckoutResult, Error, CheckoutRequest, unknown>>
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: paymentApi.checkout,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.payments.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.wishlist.all });
+    },
+    ...options,
+  });
+}
+
+export function usePayment(
+  id: string,
+  options?: Partial<UseQueryOptions<PaymentItem, Error, PaymentItem, QueryKey>>
+) {
+  return useQuery(getQueryOptions(
+    queryKeys.payments.detail(id),
+    () => paymentApi.getById(id),
+    { enabled: !!id, staleTime: 0, ...options }
+  ));
+}
+
+export function usePayments(
+  params?: { page?: number; limit?: number },
+  options?: Partial<UseQueryOptions<PaginatedResponse<PaymentItem>, Error, PaginatedResponse<PaymentItem>, QueryKey>>
+) {
+  const isAuthenticated = useIsAuthenticated();
+  return useQuery(getQueryOptions(
+    queryKeys.payments.list(params),
+    () => paymentApi.list(params),
+    { enabled: isAuthenticated, ...options }
+  ));
+}
+
+/** Pulls the live provider status — used while returning from a hosted page. */
+export function useRefreshPayment(
+  options?: Partial<UseMutationOptions<PaymentItem, Error, string, unknown>>
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => paymentApi.refresh(id),
+    onSuccess: (payment) => {
+      queryClient.setQueryData(queryKeys.payments.detail(payment.id), payment);
+    },
+    ...options,
+  });
+}
+
+export function useSandboxDecision(
+  options?: Partial<UseMutationOptions<PaymentItem, Error, { id: string; decision: 'approve' | 'decline' }, unknown>>
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, decision }: { id: string; decision: 'approve' | 'decline' }) =>
+      paymentApi.sandbox(id, decision),
+    onSuccess: (payment) => {
+      queryClient.setQueryData(queryKeys.payments.detail(payment.id), payment);
+      queryClient.invalidateQueries({ queryKey: queryKeys.wishlist.all });
+    },
+    ...options,
+  });
+}
+
+// ── Practice sessions (mock tests & interviews) ─────────────────────
+
+export function useMockTests(
+  params?: {
+    search?: string;
+    language?: string;
+    category?: string;
+    kind?: MockTestKind;
+    page?: number;
+    limit?: number;
+  },
+  options?: Partial<UseQueryOptions<PaginatedResponse<MockTestItem>, Error, PaginatedResponse<MockTestItem>, QueryKey>>
+) {
+  return useQuery(getQueryOptions(
+    queryKeys.mockTests.list(params),
+    () => mockTestApi.list(params),
+    options
+  ));
+}
+
+export function useMockTestFacets(
+  options?: Partial<UseQueryOptions<MockTestFacets, Error, MockTestFacets, QueryKey>>
+) {
+  return useQuery(getQueryOptions(
+    queryKeys.mockTests.facets(),
+    () => mockTestApi.facets(),
+    options
+  ));
+}
+
+export function useMockTestBySlug(
+  slug: string,
+  options?: Partial<UseQueryOptions<MockTestItem, Error, MockTestItem, QueryKey>>
+) {
+  return useQuery(getQueryOptions(
+    queryKeys.mockTests.slug(slug),
+    () => mockTestApi.getBySlug(slug),
+    { enabled: !!slug, ...options }
+  ));
+}
+
+export function useAdminMockTests(
+  params?: { search?: string; page?: number; limit?: number },
+  options?: Partial<UseQueryOptions<PaginatedResponse<MockTestItem>, Error, PaginatedResponse<MockTestItem>, QueryKey>>
+) {
+  return useQuery(getQueryOptions(
+    queryKeys.mockTests.adminList(params),
+    () => mockTestApi.adminList(params),
+    { staleTime: 0, ...options }
+  ));
+}
+
+export function useCreateMockTest(
+  options?: Partial<UseMutationOptions<MockTestItem, Error, {
+    input: MockTestInput;
+    files: { pdf?: File; media?: File };
+    onProgress?: (p: { percent: number; loaded: number; total: number }) => void;
+  }, unknown>>
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ input, files, onProgress }: {
+      input: MockTestInput;
+      files: { pdf?: File; media?: File };
+      onProgress?: (p: { percent: number; loaded: number; total: number }) => void;
+    }) => mockTestApi.create(input, files, onProgress),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.mockTests.all });
+    },
+    ...options,
+  });
+}
+
+export function useUpdateMockTest(
+  options?: Partial<UseMutationOptions<MockTestItem, Error, {
+    id: string;
+    input: Partial<MockTestInput>;
+    files?: { pdf?: File; media?: File };
+    onProgress?: (p: { percent: number; loaded: number; total: number }) => void;
+  }, unknown>>
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, input, files, onProgress }: {
+      id: string;
+      input: Partial<MockTestInput>;
+      files?: { pdf?: File; media?: File };
+      onProgress?: (p: { percent: number; loaded: number; total: number }) => void;
+    }) => mockTestApi.update(id, input, files, onProgress),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.mockTests.all });
+    },
+    ...options,
+  });
+}
+
+export function useDeleteMockTest(
+  options?: Partial<UseMutationOptions<MockTestItem, Error, string, unknown>>
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => mockTestApi.remove(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.mockTests.all });
+    },
+    ...options,
+  });
+}
+
+export function useMyAttempts(
+  mockTestId?: string,
+  options?: Partial<UseQueryOptions<MockTestAttempt[], Error, MockTestAttempt[], QueryKey>>
+) {
+  const isAuthenticated = useIsAuthenticated();
+  return useQuery(getQueryOptions(
+    queryKeys.mockTests.attempts(mockTestId),
+    () => mockTestApi.myAttempts(mockTestId),
+    { enabled: isAuthenticated, staleTime: 0, ...options }
+  ));
+}
+
+export function useSaveAttempt(
+  options?: Partial<UseMutationOptions<MockTestAttempt, Error, {
+    mockTestId: string;
+    recording: Blob;
+    durationSeconds?: number;
+    notes?: string;
+  }, unknown>>
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ mockTestId, recording, durationSeconds, notes }: {
+      mockTestId: string;
+      recording: Blob;
+      durationSeconds?: number;
+      notes?: string;
+    }) => mockTestApi.saveAttempt(mockTestId, recording, { durationSeconds, notes }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.mockTests.all });
+    },
+    ...options,
+  });
+}
+
+export function useDeleteAttempt(
+  options?: Partial<UseMutationOptions<{ id: string; removed: boolean }, Error, string, unknown>>
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (attemptId: string) => mockTestApi.deleteAttempt(attemptId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.mockTests.all });
     },
     ...options,
   });

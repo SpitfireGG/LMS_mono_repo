@@ -73,6 +73,162 @@ export interface CourseSeoMeta {
   lastModified?: string;
 }
 
+export type PaymentProviderKey = 'STRIPE' | 'PAYONEER' | 'CARD';
+
+export type PaymentStatusValue =
+  | 'PENDING'
+  | 'PROCESSING'
+  | 'REQUIRES_ACTION'
+  | 'SUCCEEDED'
+  | 'FAILED'
+  | 'CANCELLED'
+  | 'REFUNDED';
+
+/** The trimmed course the API embeds on a payment. */
+export interface PaymentCourse {
+  id: string;
+  slug: string;
+  title: string;
+  image: string | null;
+  tag: string;
+  author: string;
+}
+
+export interface PaymentItem {
+  id: string;
+  reference: string;
+  userId: string;
+  courseId: string;
+  provider: PaymentProviderKey;
+  status: PaymentStatusValue;
+  amount: number;
+  currency: string;
+  providerRef: string | null;
+  checkoutUrl: string | null;
+  failureReason: string | null;
+  metadata: Record<string, unknown> | null;
+  cardBrand: string | null;
+  cardLast4: string | null;
+  cardExpMonth: number | null;
+  cardExpYear: number | null;
+  paidAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  course?: PaymentCourse;
+}
+
+export interface PaymentMethodOption {
+  key: PaymentProviderKey;
+  label: string;
+  description: string;
+  enabled: boolean;
+  /** True when the provider has no credentials and settles locally. */
+  sandbox: boolean;
+}
+
+export interface PaymentConfig {
+  currency: string;
+  providers: PaymentMethodOption[];
+  stripePublishableKey: string | null;
+  acceptsRawCard: boolean;
+}
+
+export interface CardDetailsInput {
+  number: string;
+  expMonth: number;
+  expYear: number;
+  cvc: string;
+  holderName?: string;
+}
+
+export interface CheckoutRequest {
+  courseId: string;
+  provider: PaymentProviderKey;
+  paymentMethodId?: string;
+  card?: CardDetailsInput;
+  successUrl?: string;
+  cancelUrl?: string;
+}
+
+export interface CheckoutResult {
+  payment: PaymentItem;
+  /** Hosted provider page, or a 3-D Secure redirect for the card flow. */
+  checkoutUrl: string | null;
+  clientSecret: string | null;
+  sandbox: boolean;
+}
+
+export interface WishlistEntry {
+  id: string;
+  userId: string;
+  courseId: string;
+  createdAt: string;
+  course: CourseItem;
+}
+
+export type MockTestKind = 'MOCK_TEST' | 'INTERVIEW';
+
+export interface MockTestItem {
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  language: string;
+  category: string;
+  level: string;
+  kind: MockTestKind;
+  isFree: boolean;
+  status: PublishStatus;
+  sortOrder: number;
+  durationSeconds: number | null;
+  pdfUrl: string | null;
+  pdfName: string | null;
+  pdfSize: number | null;
+  mediaUrl: string | null;
+  mediaName: string | null;
+  mediaSize: number | null;
+  mediaMimeType: string | null;
+  /** True when the assets are withheld because the visitor is signed out. */
+  locked?: boolean;
+  publishedAt: string | null;
+  contentUpdatedAt: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MockTestFacets {
+  languages: { value: string; count: number }[];
+  categories: { value: string; count: number }[];
+  kinds: { value: string; count: number }[];
+  total: number;
+}
+
+export interface MockTestAttempt {
+  id: string;
+  userId: string;
+  mockTestId: string;
+  recordingUrl: string | null;
+  recordingSize: number | null;
+  durationSeconds: number | null;
+  notes: string | null;
+  createdAt: string;
+  mockTest?: { id: string; slug: string; title: string; language: string };
+}
+
+export interface MockTestInput {
+  title: string;
+  slug?: string;
+  description?: string;
+  language?: string;
+  category?: string;
+  level?: string;
+  kind?: MockTestKind;
+  isFree?: boolean;
+  sortOrder?: number;
+  status?: PublishStatus;
+  durationSeconds?: number;
+}
+
 export interface PaginatedResponse<T> {
   data: T[];
   meta: {

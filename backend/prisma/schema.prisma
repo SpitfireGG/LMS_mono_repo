@@ -22,6 +22,29 @@ enum RedirectType {
   GONE // 410
 }
 
+// ---------- Payments ----------
+enum PaymentProvider {
+  STRIPE // hosted Stripe Checkout
+  PAYONEER // hosted Payoneer Checkout
+  CARD // card entered on our own checkout form
+}
+
+enum PaymentStatus {
+  PENDING // created, customer has not paid yet
+  PROCESSING // handed off to the provider / awaiting settlement
+  REQUIRES_ACTION // 3-D Secure or provider redirect still outstanding
+  SUCCEEDED
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+// ---------- Practice sessions ----------
+enum MockTestKind {
+  MOCK_TEST // exam-style dialogue practice
+  INTERVIEW // real-life mock interview
+}
+
 model User {
   id              String   @id @default(cuid())
   email           String   @unique
@@ -36,6 +59,9 @@ model User {
   updatedAt       DateTime @updatedAt
 
   enrollments Enrollment[]
+  wishlist    WishlistItem[]
+  payments    Payment[]
+  attempts    MockTestAttempt[]
 }
 
 model Enrollment {
@@ -91,11 +117,126 @@ model Course {
   deletedAt        DateTime?
 
   enrollments Enrollment[]
+  wishlisted  WishlistItem[]
+  payments    Payment[]
 
   @@unique([slug, locale])
   @@index([status, publishedAt(sort: Desc)])
   @@index([status, contentUpdatedAt(sort: Desc)])
   @@map("courses")
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId  String
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("wishlist_items")
+}
+
+model Payment {
+  id        String          @id @default(cuid())
+  reference String          @unique // our own order reference shown to the customer
+  userId    String
+  courseId  String
+  provider  PaymentProvider
+  status    PaymentStatus   @default(PENDING)
+  amount    Float // charged amount in major units (e.g. 249.00)
+  currency  String          @default("AUD")
+
+  // --- Provider handles ---
+  providerRef   String? // Stripe session/payment_intent id, Payoneer list id
+  checkoutUrl   String? // hosted page the customer was sent to
+  failureReason String?
+  metadata      Json?
+
+  // --- Card fingerprint (never the PAN) ---
+  cardBrand    String?
+  cardLast4    String?
+  cardExpMonth Int?
+  cardExpYear  Int?
+
+  paidAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([providerRef])
+  @@index([status])
+  @@map("payments")
+}
+
+/// A practice session: a PDF (script, question paper or brief) played
+/// alongside its audio or video recording, both uploaded by an admin.
+model MockTest {
+  id          String       @id @default(cuid())
+  slug        String
+  locale      String       @default("en")
+  status      PublishStatus @default(DRAFT)
+  kind        MockTestKind @default(MOCK_TEST)
+  title       String
+  description String?
+  language    String       @default("Nepali") // LOTE paired with English
+  category    String       @default("general") // health | legal | social | education | financial | community | general
+  level       String       @default("All Levels")
+
+  /// Free sessions are the lead magnet — playable without an account.
+  isFree    Boolean @default(false)
+  sortOrder Int     @default(0)
+
+  // --- PDF ---
+  pdfUrl  String?
+  pdfName String?
+  pdfSize Int?
+
+  // --- Audio or video ---
+  mediaUrl      String?
+  mediaName     String?
+  mediaSize     Int?
+  mediaMimeType String?
+  durationSeconds Float?
+
+  publishedAt      DateTime?
+  contentUpdatedAt DateTime  @default(now())
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+
+  attempts MockTestAttempt[]
+
+  @@unique([slug, locale])
+  @@index([status, language, category])
+  @@index([status, sortOrder])
+  @@map("mock_tests")
+}
+
+/// A candidate's recorded run at a practice session. Holds the recording so
+/// scoring or tutor review can be layered on later.
+model MockTestAttempt {
+  id              String   @id @default(cuid())
+  userId          String
+  mockTestId      String
+  recordingUrl    String?
+  recordingSize   Int?
+  durationSeconds Float?
+  notes           String?
+  createdAt       DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mockTest MockTest @relation(fields: [mockTestId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([mockTestId])
+  @@map("mock_test_attempts")
 }
 
 model Testimonial {
