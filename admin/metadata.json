@@ -1,0 +1,6 @@
+{
+  "name": "Skillzone Dashboard",
+  "description": "An interactive learning management and analytics dashboard built using the Skillzone Design System.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
