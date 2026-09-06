@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Breadcrumbs from "@/app/components/Breadcrumbs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { cn } from "@/app/lib/utils";
@@ -108,7 +109,7 @@ function CardField({
             "focus:outline-none focus:ring-2 transition-colors",
             error
               ? "border-[#c0603e] focus:border-[#c0603e] focus:ring-[#c0603e]/25"
-              : "border-[#dbe6dd] focus:border-[#50bc7e] focus:ring-[#50bc7e]/30",
+              : "border-[#e4ece7] focus:border-[#50bc7e] focus:ring-[#50bc7e]/30",
             right ? "pr-[74px]" : ""
           )}
         />
@@ -205,8 +206,8 @@ export default function CheckoutClient({ slug }: { slug: string }) {
     return (
       <div className="mx-auto w-full max-w-[1100px] px-[100px] max-xl:px-[60px] max-sm:px-[30px]">
         <div className="grid grid-cols-[1fr_360px] gap-[30px] max-lg:grid-cols-1">
-          <div className="h-[520px] animate-pulse rounded-[24px] bg-white/70" />
-          <div className="h-[320px] animate-pulse rounded-[24px] bg-white/70" />
+          <div className="h-[520px] animate-pulse rounded-[20px] bg-white/70" />
+          <div className="h-[320px] animate-pulse rounded-[20px] bg-white/70" />
         </div>
       </div>
     );
@@ -231,17 +232,7 @@ export default function CheckoutClient({ slug }: { slug: string }) {
 
   return (
     <div className="mx-auto w-full max-w-[1180px] px-[100px] max-xl:px-[60px] max-sm:px-[30px]">
-      <nav className="flex items-center gap-[8px] text-[14px] text-[#566b5d]" aria-label="Breadcrumb">
-        <Link href="/courses" className="hover:text-[#056839]">
-          Courses
-        </Link>
-        <span aria-hidden>/</span>
-        <Link href={`/courses/${course.slug}`} className="hover:text-[#056839]">
-          {course.title}
-        </Link>
-        <span aria-hidden>/</span>
-        <span className="font-medium text-[#0a4a29]">Checkout</span>
-      </nav>
+      <Breadcrumbs items={[{ label: "Courses", href: "/courses" }, { label: course.title, href: `/courses/${course.slug}` }, { label: "Checkout" }]} />
 
       <h1 className="mt-[18px] text-[clamp(2rem,4vw,2.8rem)]/[1.08] font-medium tracking-[-0.03em] text-[#0a4a29]">
         Complete your <span className="marker">enrolment</span>
@@ -264,7 +255,7 @@ export default function CheckoutClient({ slug }: { slug: string }) {
             </div>
           )}
 
-          <div className="rounded-[22px] border border-[#dbe6dd] bg-white p-[26px] shadow-[var(--shadow-e1)] max-sm:p-[20px]">
+          <div className="rounded-[20px] border border-[#e4ece7] bg-white p-[26px] shadow-[var(--shadow-e1)] max-sm:p-[20px]">
             <h2 className="text-[19px] font-semibold text-[#0a4a29]">Payment method</h2>
             <p className="mt-[4px] text-[14px] text-[#566b5d]">
               Choose how you&apos;d like to pay. Every option is encrypted end to end.
@@ -286,7 +277,7 @@ export default function CheckoutClient({ slug }: { slug: string }) {
                       "flex items-center gap-[14px] rounded-[16px] border p-[16px] text-left transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
                       selected
                         ? "border-[#056839] bg-[#f2f8f4] ring-2 ring-[#50bc7e]/25"
-                        : "border-[#dbe6dd] bg-white hover:border-[#9ec7ac]"
+                        : "border-[#e4ece7] bg-white hover:border-[#9ec7ac]"
                     )}
                   >
                     <Mark />
@@ -306,7 +297,7 @@ export default function CheckoutClient({ slug }: { slug: string }) {
                     <span
                       className={cn(
                         "grid h-[20px] w-[20px] shrink-0 place-items-center rounded-full border transition-colors",
-                        selected ? "border-[#056839]" : "border-[#cfe3d6]"
+                        selected ? "border-[#056839]" : "border-[#e4ece7]"
                       )}
                     >
                       <span
@@ -323,7 +314,7 @@ export default function CheckoutClient({ slug }: { slug: string }) {
 
             {/* Card details */}
             {provider === "CARD" && (
-              <div className="mt-[22px] border-t border-[#e6efe8] pt-[22px]">
+              <div className="mt-[22px] border-t border-[#e4ece7] pt-[22px]">
                 <div className="flex items-center justify-between">
                   <h3 className="text-[16px] font-semibold text-[#0a4a29]">Card details</h3>
                   <span className="text-[13px] font-medium text-[#566b5d]">
@@ -405,7 +396,7 @@ export default function CheckoutClient({ slug }: { slug: string }) {
             <button
               type="submit"
               disabled={checkout.isPending}
-              className="mt-[22px] inline-flex w-full items-center justify-center gap-[9px] rounded-[14px] bg-[#0a4a29] px-[24px] py-[16px] text-[16px] font-medium text-white shadow-[var(--shadow-e2)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#056839] hover:shadow-[var(--shadow-lift)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+              className="mt-[22px] inline-flex w-full items-center justify-center gap-[9px] rounded-[14px] bg-[#0a4a29] px-[24px] py-[16px] text-[16px] font-medium text-white shadow-[var(--shadow-soft)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#056839] hover:shadow-[var(--shadow-soft-lift)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
             >
               {checkout.isPending ? (
                 <>
@@ -436,7 +427,7 @@ export default function CheckoutClient({ slug }: { slug: string }) {
         </form>
 
         {/* ── Order summary ────────────────────────────────── */}
-        <aside className="rounded-[22px] border border-[#dbe6dd] bg-white p-[24px] shadow-[var(--shadow-e1)] lg:sticky lg:top-[20px]">
+        <aside className="rounded-[20px] border border-[#e4ece7] bg-white p-[24px] shadow-[var(--shadow-e1)] lg:sticky lg:top-[20px]">
           <h2 className="text-[17px] font-semibold text-[#0a4a29]">Order summary</h2>
 
           <div className="mt-[16px] flex gap-[14px]">
@@ -457,7 +448,7 @@ export default function CheckoutClient({ slug }: { slug: string }) {
             </div>
           </div>
 
-          <dl className="mt-[20px] flex flex-col gap-[10px] border-t border-[#e6efe8] pt-[16px] text-[14.5px]">
+          <dl className="mt-[20px] flex flex-col gap-[10px] border-t border-[#e4ece7] pt-[16px] text-[14.5px]">
             <div className="flex items-center justify-between">
               <dt className="text-[#566b5d]">Course price</dt>
               <dd className="text-[#0a4a29]">
@@ -470,7 +461,7 @@ export default function CheckoutClient({ slug }: { slug: string }) {
                 <dd className="font-medium text-[#056839]">−{formatMoney(saving, currency)}</dd>
               </div>
             )}
-            <div className="flex items-center justify-between border-t border-[#e6efe8] pt-[12px]">
+            <div className="flex items-center justify-between border-t border-[#e4ece7] pt-[12px]">
               <dt className="font-semibold text-[#0a4a29]">Total due</dt>
               <dd className="text-[20px] font-semibold text-[#0a4a29]">
                 {formatMoney(course.price, currency)}

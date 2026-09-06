@@ -12,7 +12,6 @@ const navLinks = [
   { href: "/courses", label: "Courses" },
   { href: "/practice", label: "Practice" },
   { href: "/about", label: "About" },
-  { href: "/#process", label: "How It Works" },
   { href: "/#team", label: "Tutors" },
   { href: "/contact", label: "Contact" },
 ];
@@ -65,7 +64,7 @@ export default function NavigationBar() {
     <div className="flex items-center justify-between px-[100px] max-xl:px-[60px] max-sm:px-[30px] max-md:gap-[20px] py-0 relative w-full max-w-[1440px] mx-auto">
       <Link
         href="/"
-        className="flex items-center gap-[12px] overflow-clip px-0 py-[10px] relative max-md:w-full"
+        className="flex items-center gap-[18px] overflow-clip px-0 py-[10px] relative max-md:w-full"
         aria-label="Home"
       >
         <Logo className="h-[52px] relative shrink-0 w-[60px] max-md:h-[38px] max-md:w-[44px]" />
@@ -73,7 +72,7 @@ export default function NavigationBar() {
           NAATI EXCELLENCE
         </span>
       </Link>
-      <div className="flex gap-[36px] items-center justify-center relative shrink-0 max-xl:hidden">
+      <div className="flex gap-[30px] items-center justify-center relative shrink-0 max-xl:hidden">
         {navLinks.map(({ href, label }, index) => (
           <Link
             key={index}

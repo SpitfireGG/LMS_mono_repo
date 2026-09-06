@@ -2,12 +2,38 @@
 
 import { useMemo, useState } from "react";
 import { cn } from "@/app/lib/utils";
+import InputSelect from "./InputSelect";
 
 const tutors = [
   { id: "any", name: "Any available advisor", role: "First free slot", initials: "NA" },
   { id: "sarah", name: "Dr. Sarah Chen", role: "NAATI CCL Lead Tutor", initials: "SC" },
   { id: "james", name: "James Mitchell", role: "PTE & IELTS Specialist", initials: "JM" },
   { id: "priya", name: "Priya Sharma", role: "Technology Courses", initials: "PS" },
+];
+
+const languageOptions = [
+  { value: "nepali", label: "Nepali NAATI CCL" },
+  { value: "hindi", label: "Hindi NAATI CCL" },
+  { value: "bangla", label: "Bangla (Bengali) NAATI CCL" },
+  { value: "arabic", label: "Arabic NAATI CCL" },
+  { value: "malay", label: "Malay NAATI CCL" },
+  { value: "punjabi", label: "Punjabi NAATI CCL" },
+  { value: "sinhala", label: "Sinhala NAATI CCL" },
+  { value: "tamil", label: "Tamil NAATI CCL" },
+  { value: "telugu", label: "Telugu NAATI CCL" },
+  { value: "filipino", label: "Filipino (Tagalog) NAATI CCL" },
+  { value: "korean", label: "Korean NAATI CCL" },
+  { value: "mandarin", label: "Mandarin (Chinese) NAATI CCL" },
+  { value: "spanish", label: "Spanish NAATI CCL" },
+  { value: "swahili", label: "Swahili NAATI CCL" },
+  { value: "urdu", label: "Urdu NAATI CCL" },
+  { value: "persian", label: "Persian (Farsi) NAATI CCL" },
+  { value: "french", label: "French NAATI CCL" },
+  { value: "vietnamese", label: "Vietnamese NAATI CCL" },
+  { value: "cantonese", label: "Cantonese (Chinese) NAATI CCL" },
+  { value: "japanese", label: "Japanese NAATI CCL" },
+  { value: "gujarati", label: "Gujarati NAATI CCL" },
+  { value: "malayalam", label: "Malayalam NAATI CCL" },
 ];
 
 const slots = ["9:00 am", "10:30 am", "12:00 pm", "2:00 pm", "3:30 pm", "5:00 pm"];
@@ -37,6 +63,7 @@ function nextDays(n: number) {
 export default function BookingWidget() {
   const days = useMemo(() => nextDays(8).filter((d) => !d.weekend).slice(0, 6), []);
   const [tutor, setTutor] = useState("any");
+  const [language, setLanguage] = useState("nepali");
   const [date, setDate] = useState(days[0]?.key ?? "");
   const [slot, setSlot] = useState("");
   const [name, setName] = useState("");
@@ -57,7 +84,7 @@ export default function BookingWidget() {
 
   if (booked) {
     return (
-      <div className="mx-auto max-w-[560px] rounded-[26px] border border-[#cfe3d6] bg-white p-[44px] text-center shadow-[var(--shadow-e2)]">
+      <div className="mx-auto max-w-[560px] rounded-[20px] border border-[#e4ece7] bg-white p-[44px] text-center shadow-[var(--shadow-soft)]">
         <div className="mx-auto grid h-[64px] w-[64px] place-items-center rounded-full bg-[#e8f6ee]">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#056839" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
         </div>
@@ -70,7 +97,7 @@ export default function BookingWidget() {
         </p>
         <button
           onClick={() => { setBooked(false); setSlot(""); }}
-          className="mt-[24px] rounded-[12px] border border-[#cfe3d6] bg-white px-[20px] py-[11px] text-[14px] font-medium text-[#0a4a29] transition-colors hover:bg-[#e8f6ee] cursor-pointer"
+          className="mt-[24px] rounded-[12px] border border-[#e4ece7] bg-white px-[20px] py-[11px] text-[14px] font-medium text-[#0a4a29] transition-colors hover:bg-[#e8f6ee] cursor-pointer"
         >
           Book another time
         </button>
@@ -81,7 +108,7 @@ export default function BookingWidget() {
   return (
     <div className="grid grid-cols-[300px_1fr] gap-[28px] max-lg:grid-cols-1">
       {/* Tutor picker */}
-      <aside className="rounded-[24px] border border-[#dbe6dd] bg-white p-[22px] shadow-[var(--shadow-e1)] lg:sticky lg:top-[20px] h-fit">
+      <aside className="rounded-[20px] border border-[#e4ece7] bg-white p-[22px] shadow-[var(--shadow-e1)] lg:sticky lg:top-[20px] h-fit">
         <p className="mb-[6px] text-[13px] font-semibold uppercase tracking-[0.06em] text-[#8a988e]">Choose who you meet</p>
         <div className="flex flex-col gap-[8px]">
           {tutors.map((t) => {
@@ -93,7 +120,7 @@ export default function BookingWidget() {
                 aria-pressed={active}
                 className={cn(
                   "flex items-center gap-[12px] rounded-[15px] border p-[12px] text-left transition-colors cursor-pointer",
-                  active ? "border-[#056839] bg-[#e8f6ee]" : "border-[#dbe6dd] bg-white hover:bg-[#f2f8f4]"
+                  active ? "border-[#056839] bg-[#e8f6ee]" : "border-[#e4ece7] bg-white hover:bg-[#f2f8f4]"
                 )}
               >
                 <span className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-full bg-[#0a4a29] text-[14px] font-semibold text-[#50bc7e]">{t.initials}</span>
@@ -109,10 +136,25 @@ export default function BookingWidget() {
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#056839" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" strokeLinecap="round" /></svg>
           20 minutes · free · no obligation
         </div>
+        {/* Language selector */}
+        <div className="mt-[16px]">
+          <p className="mb-[6px] text-[13px] font-semibold uppercase tracking-[0.06em] text-[#8a988e]">Select your language</p>
+          <InputSelect
+            id="language"
+            name="language"
+            options={languageOptions}
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            label="Language Package"
+            placeholder="Select your Language Package"
+            required
+            selectClassName="max-w-full"
+          />
+        </div>
       </aside>
 
       {/* Date + time + details */}
-      <div className="rounded-[24px] border border-[#dbe6dd] bg-white p-[28px] max-sm:p-[22px] shadow-[var(--shadow-e2)]">
+      <div className="rounded-[20px] border border-[#e4ece7] bg-white p-[28px] max-sm:p-[22px] shadow-[var(--shadow-soft)]">
         <p className="text-[15px] font-semibold text-[#0a4a29]">1 · Pick a date</p>
         <div className="mt-[12px] flex flex-wrap gap-[10px]">
           {days.map((d) => {
@@ -123,7 +165,7 @@ export default function BookingWidget() {
                 onClick={() => setDate(d.key)}
                 className={cn(
                   "flex w-[74px] flex-col items-center rounded-[15px] border py-[12px] transition-colors cursor-pointer",
-                  active ? "border-[#0a4a29] bg-[#0a4a29] text-white" : "border-[#dbe6dd] text-[#0a4a29] hover:bg-[#e8f6ee]"
+                  active ? "border-[#0a4a29] bg-[#0a4a29] text-white" : "border-[#e4ece7] text-[#0a4a29] hover:bg-[#e8f6ee]"
                 )}
               >
                 <span className={cn("text-[12.5px]", active ? "text-white/70" : "text-[#8a988e]")}>{d.dow}</span>
@@ -144,7 +186,7 @@ export default function BookingWidget() {
                 onClick={() => setSlot(s)}
                 className={cn(
                   "rounded-[13px] border py-[12px] text-[14.5px] font-medium transition-colors cursor-pointer",
-                  active ? "border-[#056839] bg-[#056839] text-white" : "border-[#dbe6dd] text-[#0a4a29] hover:bg-[#e8f6ee]"
+                  active ? "border-[#056839] bg-[#056839] text-white" : "border-[#e4ece7] text-[#0a4a29] hover:bg-[#e8f6ee]"
                 )}
               >
                 {s}
@@ -156,14 +198,14 @@ export default function BookingWidget() {
         <p className="mt-[26px] text-[15px] font-semibold text-[#0a4a29]">3 · Your details</p>
         <div className="mt-[12px] grid grid-cols-2 gap-[14px] max-sm:grid-cols-1">
           <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" autoComplete="name"
-            className="rounded-[13px] border border-[#dbe6dd] bg-white px-[15px] py-[12px] text-[15px] text-[#0a4a29] placeholder:text-[#8a988e] focus:border-[#50bc7e] focus:outline-none focus:ring-2 focus:ring-[#50bc7e]/30" />
+            className="rounded-[13px] border border-[#e4ece7] bg-white px-[15px] py-[12px] text-[15px] text-[#0a4a29] placeholder:text-[#8a988e] focus:border-[#50bc7e] focus:outline-none focus:ring-2 focus:ring-[#50bc7e]/30" />
           <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Email" autoComplete="email"
-            className="rounded-[13px] border border-[#dbe6dd] bg-white px-[15px] py-[12px] text-[15px] text-[#0a4a29] placeholder:text-[#8a988e] focus:border-[#50bc7e] focus:outline-none focus:ring-2 focus:ring-[#50bc7e]/30" />
+            className="rounded-[13px] border border-[#e4ece7] bg-white px-[15px] py-[12px] text-[15px] text-[#0a4a29] placeholder:text-[#8a988e] focus:border-[#50bc7e] focus:outline-none focus:ring-2 focus:ring-[#50bc7e]/30" />
         </div>
 
         {error && <p className="mt-[14px] rounded-[10px] bg-[#fbeee9] px-[13px] py-[9px] text-[13.5px] text-[#c0603e]">{error}</p>}
 
-        <div className="mt-[22px] flex items-center justify-between gap-[16px] border-t border-[#e6efe8] pt-[20px] max-sm:flex-col max-sm:items-stretch">
+        <div className="mt-[22px] flex items-center justify-between gap-[16px] border-t border-[#e4ece7] pt-[20px] max-sm:flex-col max-sm:items-stretch">
           <p className="text-[14px] text-[#566b5d]">
             {slot ? (
               <>Booking <span className="font-medium text-[#0a4a29]">{chosenTutor.name}</span> · {chosenDay?.dow} {chosenDay?.day} {chosenDay?.mon} · {slot}</>
@@ -171,7 +213,7 @@ export default function BookingWidget() {
           </p>
           <button
             onClick={confirm}
-            className="shrink-0 rounded-[14px] bg-[#0a4a29] px-[26px] py-[14px] text-[15px] font-medium text-white shadow-[var(--shadow-e2)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#056839] cursor-pointer"
+            className="shrink-0 rounded-[14px] bg-[#0a4a29] px-[26px] py-[14px] text-[15px] font-medium text-white shadow-[var(--shadow-soft)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#056839] cursor-pointer"
           >
             Confirm booking
           </button>

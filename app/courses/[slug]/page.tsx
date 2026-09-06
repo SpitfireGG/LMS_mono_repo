@@ -4,6 +4,8 @@ import NavigationBar from "../../components/NavigationBar";
 import Footer from "../../components/Footer";
 import FloatingWidgets from "../../components/FloatingWidgets";
 import CourseDetail from "../../components/CourseDetail";
+import Testimonials from "../../components/Testimonials";
+import FAQ from "../../components/FAQ";
 
 export const metadata: Metadata = {
   title: "Course — NAATI Excellence Academy",
@@ -27,6 +29,10 @@ export default async function CoursePage({
         <div className="mt-[40px]">
           <CourseDetail slug={slug} />
         </div>
+
+        <Testimonials className="mt-[90px] max-lg:mt-[64px]" />
+
+        <FAQ className="mt-[90px] max-lg:mt-[64px]" />
 
         <Footer className="mt-[120px] max-lg:mt-[90px] max-sm:mt-[60px]" />
         <FloatingWidgets />

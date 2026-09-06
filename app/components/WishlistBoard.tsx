@@ -33,7 +33,7 @@ export default function WishlistBoard() {
     return (
       <div className="grid grid-cols-3 gap-[24px] max-lg:grid-cols-2 max-md:grid-cols-1">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-[380px] animate-pulse rounded-[26px] bg-white/70" />
+          <div key={i} className="h-[380px] animate-pulse rounded-[20px] bg-white/70" />
         ))}
       </div>
     );
@@ -69,7 +69,7 @@ export default function WishlistBoard() {
 
   return (
     <div>
-      <div className="mb-[22px] flex items-center justify-between gap-[16px] rounded-[18px] border border-[#dbe6dd] bg-white px-[22px] py-[16px] shadow-[var(--shadow-e1)] max-sm:flex-col max-sm:items-start">
+      <div className="mb-[22px] flex items-center justify-between gap-[16px] rounded-[18px] border border-[#e4ece7] bg-white px-[22px] py-[16px] shadow-[var(--shadow-e1)] max-sm:flex-col max-sm:items-start">
         <p className="text-[15px] text-[#566b5d]">
           <span className="font-semibold text-[#0a4a29]">{total}</span>{" "}
           {total === 1 ? "course" : "courses"} saved ·{" "}
@@ -119,7 +119,7 @@ function Empty({
   action: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-[22px] border border-dashed border-[#cfe3d6] bg-white py-[80px] text-center">
+    <div className="flex flex-col items-center justify-center rounded-[20px] border border-dashed border-[#e4ece7] bg-white py-[80px] text-center">
       <div className="grid h-[56px] w-[56px] place-items-center rounded-full bg-[#e8f6ee] text-[#056839]">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <path d="M20.8 5.6a5.2 5.2 0 00-7.4 0L12 7l-1.4-1.4a5.2 5.2 0 10-7.4 7.4L12 21.4l8.8-8.4a5.2 5.2 0 000-7.4Z" />

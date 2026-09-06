@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Breadcrumbs from "@/app/components/Breadcrumbs";
 import AnnouncementBar from "../components/AnnouncementBar";
 import NavigationBar from "../components/NavigationBar";
 import Footer from "../components/Footer";
@@ -20,16 +20,9 @@ export default function BookPage() {
         <NavigationBar />
         <header className="relative mt-[40px]">
           <div className="w-full max-w-[1440px] mx-auto px-[100px] max-xl:px-[60px] max-sm:px-[30px]">
-            <nav className="flex items-center gap-[8px] text-[14px] text-[#566b5d]" aria-label="Breadcrumb">
-              <Link href="/" className="hover:text-[#056839]">Home</Link>
-              <span aria-hidden>/</span>
-              <span className="font-medium text-[#0a4a29]">Book a consultation</span>
-            </nav>
+            <Breadcrumbs items={[{ label: "Book a consultation" }]} />
             <div className="mt-[18px] max-w-[680px]">
-              <span className="chip text-[14px] text-[#0a4a29]">
-                <span className="h-[7px] w-[7px] rounded-full bg-[#50bc7e]" /> Free · 20 minutes · online
-              </span>
-              <h1 className="mt-[18px] text-[clamp(2.3rem,4.6vw,3.4rem)]/[1.05] font-medium tracking-[-0.03em] text-[#0a4a29]">
+              <h1 className="text-[clamp(2.3rem,4.6vw,3.4rem)]/[1.05] font-medium tracking-[-0.03em] text-[#0a4a29]">
                 Book your <span className="marker">free consultation</span>
               </h1>
               <p className="text-pretty mt-[16px] text-[18px]/[1.6] text-[#566b5d]">

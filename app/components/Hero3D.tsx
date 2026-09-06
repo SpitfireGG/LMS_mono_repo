@@ -99,7 +99,7 @@ export default function Hero3D({ className = "" }: { className?: string }) {
           style={{ transform: "rotate(-4deg)" }}
         >
           <div className="card-float-alt">
-            <div className="rounded-[24px] border border-[#cfe3d6] bg-[#056839] p-5 shadow-[var(--shadow-e3)]">
+            <div className="rounded-[20px] border border-[#e4ece7] bg-[#056839] p-5 shadow-[var(--shadow-e3)]">
               <p className="text-[13px] font-medium text-white/75">
                 Courses live now
               </p>
@@ -126,7 +126,7 @@ export default function Hero3D({ className = "" }: { className?: string }) {
           style={{ transform: "rotate(3deg)" }}
         >
           <div className="card-float-alt" style={{ animationDelay: "1.6s" }}>
-            <div className="rounded-[20px] border border-[#cfe3d6] bg-white p-4 shadow-[var(--shadow-e2)]">
+            <div className="rounded-[20px] border border-[#e4ece7] bg-white p-4 shadow-[var(--shadow-soft)]">
               <div className="flex items-center gap-2.5">
                 <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#0a4a29] text-[15px] font-medium text-[#50bc7e]">
                   PT
@@ -156,12 +156,12 @@ export default function Hero3D({ className = "" }: { className?: string }) {
           style={{ transform: "rotate(-1.5deg)" }}
         >
           <div className="card-float">
-            <div className="rounded-[26px] border border-[#cfe3d6] bg-white p-6 shadow-[var(--shadow-e3)]">
+            <div className="rounded-[20px] border border-[#e4ece7] bg-white p-6 shadow-[var(--shadow-e3)]">
               <div className="flex items-start justify-between gap-3">
                 <span className="marker text-[13px] font-medium">
                   NAATI CCL
                 </span>
-                <span className="rounded-full border border-[#cfe3d6] px-2.5 py-0.5 text-[12px] font-medium text-[#0a4a29]">
+                <span className="rounded-full border border-[#e4ece7] px-2.5 py-0.5 text-[12px] font-medium text-[#0a4a29]">
                   4.9 ★
                 </span>
               </div>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Breadcrumbs from "@/app/components/Breadcrumbs";
 import AnnouncementBar from "../components/AnnouncementBar";
 import NavigationBar from "../components/NavigationBar";
 import Footer from "../components/Footer";
@@ -30,21 +30,11 @@ export default function CoursesPage() {
             }}
           />
           <div className="w-full max-w-[1440px] mx-auto px-[100px] max-xl:px-[60px] max-sm:px-[30px]">
-            <nav className="flex items-center gap-[8px] text-[14px] text-[#566b5d]" aria-label="Breadcrumb">
-              <Link href="/" className="hover:text-[#056839]">
-                Home
-              </Link>
-              <span aria-hidden>/</span>
-              <span className="font-medium text-[#0a4a29]">Courses</span>
-            </nav>
+            <Breadcrumbs items={[{ label: "Courses" }]} />
 
             <div className="mt-[18px] flex items-end justify-between gap-[30px] max-md:flex-col max-md:items-start">
               <div className="max-w-[640px]">
-                <span className="chip text-[14px] text-[#0a4a29]">
-                  <span className="h-[7px] w-[7px] rounded-full bg-[#50bc7e]" />
-                  320+ programs · certified tutors
-                </span>
-                <h1 className="mt-[18px] text-[clamp(2.4rem,5vw,3.6rem)]/[1.05] font-medium tracking-[-0.03em] text-[#0a4a29]">
+                <h1 className="text-[clamp(2.4rem,5vw,3.6rem)]/[1.05] font-medium tracking-[-0.03em] text-[#0a4a29]">
                   Explore <span className="marker">all courses</span>
                 </h1>
                 <p className="text-pretty mt-[16px] text-[18px]/[1.55] text-[#566b5d]">

@@ -3,6 +3,30 @@
 :root {
   --background: #f7faf6;
   --foreground: #0a4a29;
+  --sidebar: hsl(0 0% 98%);
+  --sidebar-foreground: hsl(240 5.3% 26.1%);
+  --sidebar-primary: #0a4a29;
+  --sidebar-primary-foreground: hsl(0 0% 98%);
+  --sidebar-accent: hsl(240 4.8% 95.9%);
+  --sidebar-accent-foreground: hsl(240 5.9% 10%);
+  --sidebar-border: hsl(220 13% 91%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: #0a4a29;
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --radius: 0.625rem;
 }
 
 @theme inline {
@@ -27,8 +51,29 @@
   /* Neutrals — warm-leaning canvas (reads better against green)  */
   --color-bg: #f7faf6;
   --color-surface: #eef4ee;
-  --color-line: #dbe6dd;
+  --color-line: #e4ece7;
   --color-muted: #566b5d; /* ≥4.5:1 on bg, surface and mist       */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
   /* ── Elevation — soft, layered, green-tinted (no hard offsets) */
   --shadow-e1: 0 1px 2px rgba(10, 74, 41, 0.04), 0 6px 16px -8px rgba(10, 74, 41, 0.14);
@@ -36,6 +81,14 @@
   --shadow-e3: 0 6px 14px rgba(10, 74, 41, 0.06), 0 34px 60px -26px rgba(10, 74, 41, 0.28);
   --shadow-lift: 0 10px 24px rgba(10, 74, 41, 0.08), 0 40px 70px -28px rgba(10, 74, 41, 0.32);
   --shadow-ring: 0 0 0 1px rgba(10, 74, 41, 0.06);
+
+  /* Quiet elevation — the reference language: hairline + soft bloom */
+  --shadow-soft: 0 1px 2px rgba(10, 74, 41, 0.035), 0 10px 30px -14px rgba(10, 74, 41, 0.16);
+  --shadow-soft-lift: 0 2px 6px rgba(10, 74, 41, 0.05), 0 24px 48px -20px rgba(10, 74, 41, 0.24);
+
+  /* One radius scale for the whole page */
+  --radius-card: 20px;
+  --radius-panel: 32px;
 
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -68,7 +121,7 @@ h1, h2, h3 {
 
 /* ── Marker highlight — echoes the logo's green ribbon ───────── */
 .marker {
-  background: linear-gradient(180deg, #0f8f99 0%, #0e7c86 100%);
+  background: linear-gradient(180deg, #0a6c3e 0%, #05532f 100%);
   color: #ffffff;
   border-radius: 10px;
   padding: 0.05em 0.34em;
@@ -220,16 +273,6 @@ h1, h2, h3 {
   border: 1px solid var(--color-line);
   box-shadow: var(--shadow-e2);
 }
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  border-radius: 999px;
-  border: 1px solid var(--color-line);
-  background: #ffffff;
-  padding: 0.4rem 0.85rem;
-  font-weight: 500;
-}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -238,4 +281,68 @@ h1, h2, h3 {
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ── Shared section language ─────────────────────────────────── */
+/* Soft multi-radial canvas: a near-white ground lifted by brand-tinted
+   washes, so a section reads as light and airy rather than flat grey. */
+.soft-canvas {
+  background-color: #fbfdfb;
+  background-image:
+    radial-gradient(42% 38% at 10% 6%, rgba(80, 188, 126, 0.16), transparent 62%),
+    radial-gradient(38% 34% at 90% 4%, rgba(5, 104, 57, 0.09), transparent 64%),
+    radial-gradient(46% 42% at 80% 94%, rgba(80, 188, 126, 0.13), transparent 66%),
+    radial-gradient(40% 36% at 16% 96%, rgba(159, 233, 193, 0.2), transparent 64%);
+}
+
+
+/* The one card treatment: white, hairline, soft bloom */
+.card-clean {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow:
+    0 1px 2px rgba(10, 74, 41, 0.05),
+    0 8px 24px -12px rgba(10, 74, 41, 0.14);
+  transition:
+    transform 0.4s var(--ease-out-quint),
+    border-color 0.4s var(--ease-out-quint),
+    box-shadow 0.4s var(--ease-out-quint);
+}
+.card-clean-hover:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 2px 4px rgba(10, 74, 41, 0.06),
+    0 16px 36px -14px rgba(10, 74, 41, 0.2);
+}
+
+
+/* ── Offset card ──────────────────────────────────────────────
+   A solid drop-offset instead of a blur. Ours sits on both axes in
+   brand mint (not a single-axis near-black), which reads softer. */
+.offset-card {
+  border: 1px solid #cfe6d8;
+  border-radius: 24px;
+  box-shadow: 6px 6px 0 0 #dcefe4;
+  transition:
+    transform 0.35s var(--ease-out-quint),
+    box-shadow 0.35s var(--ease-out-quint),
+    border-color 0.35s var(--ease-out-quint);
+}
+.offset-card:hover {
+  transform: translate(-2px, -2px);
+  border-color: #50bc7e;
+  box-shadow: 10px 10px 0 0 #cfe6d8;
+}
+.offset-card-ink {
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 6px 6px 0 0 rgba(80, 188, 126, 0.35);
+}
+.offset-card-ink:hover {
+  border-color: rgba(80, 188, 126, 0.6);
+  box-shadow: 10px 10px 0 0 rgba(80, 188, 126, 0.45);
+}
+
+/* Organic portrait mask — an asymmetric blob, not a four-lobed squircle */
+.portrait-blob {
+  border-radius: 58% 42% 46% 54% / 52% 46% 54% 48%;
 }

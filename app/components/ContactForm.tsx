@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSubmitContact } from "@/app/lib/api/hooks";
 import { cn } from "@/app/lib/utils";
 import { courses } from "@/app/lib/courses";
 
@@ -24,7 +25,7 @@ function fieldCls(invalid = false) {
     "focus:outline-none focus:ring-2 transition-colors",
     invalid
       ? "border-[#d98b6a] focus:border-[#d98b6a] focus:ring-[#d98b6a]/25"
-      : "border-[#dbe6dd] focus:border-[#50bc7e] focus:ring-[#50bc7e]/30"
+      : "border-[#e4ece7] focus:border-[#50bc7e] focus:ring-[#50bc7e]/30"
   );
 }
 
@@ -34,16 +35,34 @@ export default function ContactForm() {
   const [consent, setConsent] = useState(false);
   const [triedSubmit, setTriedSubmit] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { mutate: submitContact, isPending, isError, error } = useSubmitContact({
+    onSuccess: () => setSent(true),
+  });
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setTriedSubmit(true);
     if (!consent) return;
-    setSent(true);
+
+    const f = new FormData(e.currentTarget);
+    const str = (k: string) => String(f.get(k) ?? "").trim();
+
+    submitContact({
+      enquiryType: str("enquiry"),
+      firstName: str("firstName"),
+      lastName: str("lastName"),
+      email: str("email"),
+      phone: str("phone") || undefined,
+      courseOfInterest: str("course") || undefined,
+      preferredContact: str("preferredContact") || method,
+      message: str("message"),
+      consented: consent,
+    });
   };
 
   if (sent) {
     return (
-      <div className="flex flex-col items-center rounded-[24px] border border-[#cfe3d6] bg-white p-[44px] text-center shadow-[var(--shadow-e2)]">
+      <div className="flex flex-col items-center rounded-[20px] border border-[#e4ece7] bg-white p-[44px] text-center shadow-[var(--shadow-soft)]">
         <div className="grid h-[64px] w-[64px] place-items-center rounded-full bg-[#e8f6ee]">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#056839" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
             <path d="M20 6L9 17l-5-5" />
@@ -61,7 +80,7 @@ export default function ContactForm() {
         <button
           type="button"
           onClick={() => setSent(false)}
-          className="mt-[24px] rounded-[12px] border border-[#cfe3d6] bg-white px-[20px] py-[11px] text-[14px] font-medium text-[#0a4a29] transition-colors hover:bg-[#e8f6ee] cursor-pointer"
+          className="mt-[24px] rounded-[12px] border border-[#e4ece7] bg-white px-[20px] py-[11px] text-[14px] font-medium text-[#0a4a29] transition-colors hover:bg-[#e8f6ee] cursor-pointer"
         >
           Send another message
         </button>
@@ -73,7 +92,7 @@ export default function ContactForm() {
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="rounded-[24px] border border-[#dbe6dd] bg-white p-[32px] max-sm:p-[24px] shadow-[var(--shadow-e2)]"
+      className="rounded-[20px] border border-[#e4ece7] bg-white p-[32px] max-sm:p-[24px] shadow-[var(--shadow-soft)]"
     >
       <h2 className="text-[24px] font-medium text-[#0a4a29]">Send us a message</h2>
       <p className="mt-[6px] text-[15px] text-[#566b5d]">
@@ -122,7 +141,7 @@ export default function ContactForm() {
               Phone <span className="text-[#8a988e]">(optional)</span>
             </label>
             <div className="flex items-stretch gap-[8px]">
-              <span className="flex shrink-0 items-center rounded-[13px] border border-[#dbe6dd] bg-[#f2f8f4] px-[13px] text-[15px] font-medium text-[#566b5d]">
+              <span className="flex shrink-0 items-center rounded-[13px] border border-[#e4ece7] bg-[#f2f8f4] px-[13px] text-[15px] font-medium text-[#566b5d]">
                 🇦🇺 +61
               </span>
               <input id="phone" name="phone" type="tel" autoComplete="tel" placeholder="4XX XXX XXX" className={fieldCls()} />
@@ -161,7 +180,7 @@ export default function ContactForm() {
                     "rounded-full border px-[18px] py-[9px] text-[14px] font-medium transition-colors cursor-pointer",
                     active
                       ? "border-[#0a4a29] bg-[#0a4a29] text-white"
-                      : "border-[#cfe3d6] bg-white text-[#0a4a29] hover:bg-[#e8f6ee]"
+                      : "border-[#e4ece7] bg-white text-[#0a4a29] hover:bg-[#e8f6ee]"
                   )}
                 >
                   {m}
@@ -198,7 +217,7 @@ export default function ContactForm() {
           <span
             className={cn(
               "mt-[1px] grid h-[20px] w-[20px] shrink-0 place-items-center rounded-[6px] border transition-colors",
-              consent ? "border-[#056839] bg-[#056839]" : "border-[#cfe3d6] bg-white group-hover:border-[#9ec7ac]",
+              consent ? "border-[#056839] bg-[#056839]" : "border-[#e4ece7] bg-white group-hover:border-[#9ec7ac]",
               triedSubmit && !consent && "border-[#d98b6a]"
             )}
           >
@@ -217,11 +236,18 @@ export default function ContactForm() {
           <p className="-mt-[8px] text-[13px] text-[#c0603e]">Please accept the privacy policy to continue.</p>
         )}
 
+        {isError && (
+          <p className="-mt-[8px] text-[13.5px] text-[#c0603e]">
+            {error?.message || "Could not send your message. Please try again."}
+          </p>
+        )}
+
         <button
           type="submit"
-          className="mt-[4px] inline-flex items-center justify-center gap-[8px] rounded-[14px] bg-[#0a4a29] px-[28px] py-[15px] text-[16px] font-medium text-white shadow-[var(--shadow-e2)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#056839] hover:shadow-[var(--shadow-lift)] cursor-pointer"
+          disabled={isPending}
+          className="mt-[4px] inline-flex items-center justify-center gap-[8px] rounded-[14px] bg-[#0a4a29] px-[28px] py-[15px] text-[16px] font-medium text-white shadow-[var(--shadow-soft)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#056839] hover:shadow-[var(--shadow-soft-lift)] cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
         >
-          Send message
+          {isPending ? "Sending…" : "Send message"}
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>

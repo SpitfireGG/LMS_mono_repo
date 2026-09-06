@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Breadcrumbs from "@/app/components/Breadcrumbs";
 import AnnouncementBar from "../components/AnnouncementBar";
 import NavigationBar from "../components/NavigationBar";
 import Footer from "../components/Footer";
@@ -21,13 +21,7 @@ export default function WishlistPage() {
 
         <header className="mt-[40px]">
           <div className="w-full max-w-[1440px] mx-auto px-[100px] max-xl:px-[60px] max-sm:px-[30px]">
-            <nav className="flex items-center gap-[8px] text-[14px] text-[#566b5d]" aria-label="Breadcrumb">
-              <Link href="/" className="hover:text-[#056839]">
-                Home
-              </Link>
-              <span aria-hidden>/</span>
-              <span className="font-medium text-[#0a4a29]">Wishlist</span>
-            </nav>
+            <Breadcrumbs items={[{ label: "Wishlist" }]} />
 
             <h1 className="mt-[18px] text-[clamp(2.2rem,4.5vw,3.2rem)]/[1.06] font-medium tracking-[-0.03em] text-[#0a4a29]">
               Saved for <span className="marker">later</span>

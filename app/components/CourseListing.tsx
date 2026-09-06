@@ -1,68 +1,32 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { cn } from "@/app/lib/utils";
 import Button from "./Button";
 import CourseCard from "./CourseCard";
 import Pagination from "./Pagination";
-import { courses, categories, type CourseCategory } from "@/app/lib/courses";
-import type { CourseItem as ApiCourseItem } from "@/app/lib/api/types";
+import { categories, type CourseCategory } from "@/app/lib/courses";
+import { useCourses } from "@/app/lib/api/hooks";
 
 const PAGE_SIZE = 6;
 
-const mapLocalToApi = (c: typeof courses[0]): ApiCourseItem => ({
-  id: c.id,
-  slug: c.title.toLowerCase().replace(/\s+/g, '-'),
-  locale: "en",
-  status: "PUBLISHED" as const,
-  category: c.category,
-  tag: c.tag,
-  title: c.title,
-  author: c.author,
-  level: c.level,
-  lessons: c.lessons,
-  hours: c.hours,
-  students: c.students,
-  rating: c.rating,
-  price: c.price,
-  originalPrice: c.originalPrice,
-  tone: c.tone ?? "dark",
-  glyph: c.glyph ?? "interpreting",
-  image: c.image ?? null,
-  description: "",
-  metaTitle: null,
-  metaDescription: null,
-  canonicalUrl: null,
-  noindex: false,
-  nofollow: false,
-  ogImageUrl: null,
-  ogImageAlt: null,
-  publishedAt: new Date().toISOString(),
-  contentUpdatedAt: new Date().toISOString(),
-  deletedAt: null,
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-});
-
 export default function CourseListing({ className }: { className?: string }) {
   const [activeCategory, setActiveCategory] = useState<CourseCategory | "all">("all");
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
 
-  const filtered = useMemo(() => 
-    activeCategory === "all"
-      ? courses
-      : courses.filter((c) => c.category === activeCategory),
-  [activeCategory]);
+  const { data, isLoading, isError } = useCourses({
+    category: activeCategory === "all" ? undefined : activeCategory,
+    page,
+    limit: PAGE_SIZE,
+  });
 
-  const filteredApi = useMemo(() => filtered.map(mapLocalToApi), [filtered]);
-
-  const pageCount = Math.ceil(filteredApi.length / PAGE_SIZE);
-  const safePage = Math.min(page, Math.max(0, pageCount - 1));
-  const visible = filteredApi.slice(safePage * PAGE_SIZE, safePage * PAGE_SIZE + PAGE_SIZE);
+  const visible = data?.data ?? [];
+  const pageCount = data?.meta.totalPages ?? 1;
+  const safePage = Math.min(page, Math.max(1, pageCount));
 
   const selectCategory = (key: CourseCategory | "all") => {
     setActiveCategory(key);
-    setPage(0);
+    setPage(1);
   };
 
   return (
@@ -99,12 +63,29 @@ export default function CourseListing({ className }: { className?: string }) {
 
       {/* Course grid */}
       <div className="grid grid-cols-3 gap-[28px] max-xl:gap-[24px] max-xl:grid-cols-2 max-sm:grid-cols-1">
-        {visible.map((course) => (
-          <CourseCard key={course.id} c={course} />
-        ))}
+        {isLoading
+          ? [...Array(PAGE_SIZE)].map((_, i) => (
+              <div
+                key={i}
+                className="h-[280px] animate-pulse rounded-[24px] border border-[#cfe3d6] bg-white"
+              />
+            ))
+          : visible.map((course) => (
+              <CourseCard key={course.id} c={course} />
+            ))}
       </div>
 
-      <Pagination page={safePage} pageCount={pageCount} onChange={setPage} className="mt-[40px]" />
+      {!isLoading && visible.length === 0 && (
+        <p className="py-[40px] text-center text-[15.5px] text-[#566b5d]">
+          {isError
+            ? "Courses are unavailable right now. Please try again shortly."
+            : "No courses in this category yet."}
+        </p>
+      )}
+
+      {pageCount > 1 && (
+        <Pagination page={safePage} pageCount={pageCount} onChange={setPage} className="mt-[40px]" />
+      )}
 
       <div className="flex justify-center mt-[44px]">
         <Button variant="primary" href="/courses" className="py-[19px] px-[35px]">

@@ -178,7 +178,7 @@ export default function PaymentStatusClient() {
         )}
       </p>
 
-      <div className="mt-[26px] w-full rounded-[18px] border border-[#e6efe8] bg-[#fbfdfb] px-[20px] py-[8px] text-left">
+      <div className="mt-[26px] w-full rounded-[18px] border border-[#e4ece7] bg-[#fbfdfb] px-[20px] py-[8px] text-left">
         <Row label="Reference" value={payment.reference} />
         <Row label="Course" value={payment.course?.title ?? payment.courseId} />
         <Row label="Method" value={providerLabels[payment.provider]} />
@@ -281,12 +281,12 @@ const primaryLink =
   "mt-[4px] inline-flex items-center justify-center rounded-[13px] bg-[#0a4a29] px-[22px] py-[13px] text-[15px] font-medium text-white no-underline transition-colors duration-300 hover:bg-[#056839]";
 
 const secondaryLink =
-  "mt-[4px] inline-flex items-center justify-center rounded-[13px] border border-[#cfe3d6] bg-white px-[22px] py-[13px] text-[15px] font-medium text-[#0a4a29] no-underline transition-colors duration-300 hover:bg-[#e8f6ee]";
+  "mt-[4px] inline-flex items-center justify-center rounded-[13px] border border-[#e4ece7] bg-white px-[22px] py-[13px] text-[15px] font-medium text-[#0a4a29] no-underline transition-colors duration-300 hover:bg-[#e8f6ee]";
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-auto w-full max-w-[620px] px-[30px]">
-      <div className="flex flex-col items-center rounded-[24px] border border-[#dbe6dd] bg-white p-[36px] text-center shadow-[var(--shadow-e2)] max-sm:p-[24px]">
+      <div className="flex flex-col items-center rounded-[20px] border border-[#e4ece7] bg-white p-[36px] text-center shadow-[var(--shadow-soft)] max-sm:p-[24px]">
         {children}
       </div>
     </div>

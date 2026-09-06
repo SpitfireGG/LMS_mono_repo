@@ -63,7 +63,7 @@ function Field({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className={cn(
-            "w-full rounded-[13px] border border-[#dbe6dd] bg-white py-[13px] pl-[44px] text-[15px] text-[#0a4a29] placeholder:text-[#8a988e]",
+            "w-full rounded-[13px] border border-[#e4ece7] bg-white py-[13px] pl-[44px] text-[15px] text-[#0a4a29] placeholder:text-[#8a988e]",
             "focus:border-[#50bc7e] focus:outline-none focus:ring-2 focus:ring-[#50bc7e]/30 transition-colors",
             right ? "pr-[46px]" : "pr-[15px]"
           )}
@@ -170,10 +170,10 @@ export default function AuthForm({ mode }: { mode: Mode }) {
 
       {/* Social */}
       <div className="mt-[26px] grid grid-cols-2 gap-[12px]">
-        <button type="button" className="flex items-center justify-center gap-[9px] rounded-[13px] border border-[#dbe6dd] bg-white py-[12px] text-[14.5px] font-medium text-[#0a4a29] transition-colors hover:bg-[#f2f8f4] cursor-pointer">
+        <button type="button" className="flex items-center justify-center gap-[9px] rounded-[13px] border border-[#e4ece7] bg-white py-[12px] text-[14.5px] font-medium text-[#0a4a29] transition-colors hover:bg-[#f2f8f4] cursor-pointer">
           <GoogleIcon /> Google
         </button>
-        <button type="button" className="flex items-center justify-center gap-[9px] rounded-[13px] border border-[#dbe6dd] bg-white py-[12px] text-[14.5px] font-medium text-[#0a4a29] transition-colors hover:bg-[#f2f8f4] cursor-pointer">
+        <button type="button" className="flex items-center justify-center gap-[9px] rounded-[13px] border border-[#e4ece7] bg-white py-[12px] text-[14.5px] font-medium text-[#0a4a29] transition-colors hover:bg-[#f2f8f4] cursor-pointer">
           <AppleIcon /> Apple
         </button>
       </div>
@@ -240,7 +240,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
         {isLogin ? (
           <div className="flex items-center justify-between">
             <button type="button" role="checkbox" aria-checked={remember} onClick={() => setRemember((v) => !v)} className="flex items-center gap-[9px] text-left cursor-pointer group">
-              <span className={cn("grid h-[19px] w-[19px] place-items-center rounded-[6px] border transition-colors", remember ? "border-[#056839] bg-[#056839]" : "border-[#cfe3d6] bg-white group-hover:border-[#9ec7ac]")}>
+              <span className={cn("grid h-[19px] w-[19px] place-items-center rounded-[6px] border transition-colors", remember ? "border-[#056839] bg-[#056839]" : "border-[#e4ece7] bg-white group-hover:border-[#9ec7ac]")}>
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 6" /></svg>
               </span>
               <span className="text-[13.5px] text-[#566b5d]">Remember me</span>
@@ -251,7 +251,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
           </div>
         ) : (
           <button type="button" role="checkbox" aria-checked={agree} onClick={() => setAgree((v) => !v)} className="flex items-start gap-[10px] text-left cursor-pointer group">
-            <span className={cn("mt-[1px] grid h-[19px] w-[19px] shrink-0 place-items-center rounded-[6px] border transition-colors", agree ? "border-[#056839] bg-[#056839]" : "border-[#cfe3d6] bg-white group-hover:border-[#9ec7ac]")}>
+            <span className={cn("mt-[1px] grid h-[19px] w-[19px] shrink-0 place-items-center rounded-[6px] border transition-colors", agree ? "border-[#056839] bg-[#056839]" : "border-[#e4ece7] bg-white group-hover:border-[#9ec7ac]")}>
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 6" /></svg>
             </span>
             <span className="text-[13px]/[1.5] text-[#566b5d]">
@@ -268,7 +268,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
         <button
           type="submit"
           disabled={loading}
-          className="mt-[2px] inline-flex items-center justify-center gap-[8px] rounded-[14px] bg-[#0a4a29] px-[24px] py-[15px] text-[16px] font-medium text-white shadow-[var(--shadow-e2)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#056839] hover:shadow-[var(--shadow-lift)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none"
+          className="mt-[2px] inline-flex items-center justify-center gap-[8px] rounded-[14px] bg-[#0a4a29] px-[24px] py-[15px] text-[16px] font-medium text-white shadow-[var(--shadow-soft)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#056839] hover:shadow-[var(--shadow-soft-lift)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none"
         >
           {loading ? (
             <>

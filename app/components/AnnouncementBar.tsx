@@ -13,16 +13,19 @@ const defaultDeals = [
 
 export default function AnnouncementBar() {
   const [open, setOpen] = useState(true);
-  const { data, isLoading } = useActiveAnnouncement();
+  const [index, setIndex] = useState(0);
+  const { data } = useActiveAnnouncement();
 
-  const deals = data && data.length > 0
-    ? data.map((a) => ({ icon: "📢", text: a.text }))
-    : defaultDeals;
+  const deals = data && data.length > 0 ? data.map((a) => ({ icon: "📢", text: a.text, link: a.link, linkText: a.linkText })) : defaultDeals.map((d) => ({ ...d, link: null, linkText: null }));
+  const current = deals[index % deals.length];
+
+  useEffect(() => {
+    if (deals.length <= 1) return;
+    const id = setInterval(() => setIndex((i) => (i + 1) % deals.length), 4000);
+    return () => clearInterval(id);
+  }, [deals.length]);
 
   if (!open) return null;
-
-  // Duplicated track for a seamless marquee loop.
-  const track = [...deals, ...deals];
 
   return (
     <div className="relative z-40 w-full overflow-hidden bg-[#0a4a29] text-white">
@@ -32,33 +35,24 @@ export default function AnnouncementBar() {
           Latest
         </span>
 
-        {/* Marquee */}
-        <div className="group relative flex-1 overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_5%,#000_95%,transparent)]">
-          <div className="animate-scroll-flags flex w-max items-center gap-[40px] group-hover:[animation-play-state:paused]">
-            {track.map((d, i) => (
-              <span key={i} className="flex shrink-0 items-center gap-[9px] text-[14px] text-white/90">
-                <span aria-hidden>{d.icon}</span>
-                <span>{d.text}</span>
-                <span className="ml-[24px] text-[#50bc7e]" aria-hidden>•</span>
-              </span>
-            ))}
-          </div>
+        <div className="flex flex-1 items-center justify-center gap-[9px] overflow-hidden text-center">
+          <span aria-hidden className="shrink-0">{current.icon}</span>
+          <span key={index} className="animate-[fadeIn_0.4s_ease] truncate text-[14px] text-white/90">{current.text}</span>
+          {deals.length > 1 && (
+            <span className="hidden items-center gap-[6px] sm:flex">
+              <span className="text-white/30">•</span>
+              <span className="text-[11px] tabular-nums text-white/50">{index + 1}/{deals.length}</span>
+            </span>
+          )}
         </div>
 
-        {data && data.length > 0 && data[0].link && (
-          <a href={data[0].link} className="hidden shrink-0 rounded-full bg-[#50bc7e] px-[15px] py-[5px] text-[13px] font-semibold text-[#0a4a29] no-underline transition-colors hover:bg-white md:inline-block">
-            {data[0].linkText ?? "Grab the deal"}
+        {current.link && (
+          <a href={current.link} className="hidden shrink-0 rounded-full bg-[#50bc7e] px-[15px] py-[5px] text-[13px] font-semibold text-[#0a4a29] no-underline transition-colors hover:bg-white md:inline-block">
+            {current.linkText ?? "Grab the deal"}
           </a>
         )}
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          aria-label="Dismiss announcement"
-          className="grid h-[26px] w-[26px] shrink-0 place-items-center rounded-full text-white/70 transition-colors hover:bg-white/12 hover:text-white cursor-pointer"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-            <path d="M6 6l12 12M18 6L6 18" />
-          </svg>
+        <button type="button" onClick={() => setOpen(false)} aria-label="Dismiss announcement" className="grid h-[26px] w-[26px] shrink-0 place-items-center rounded-full text-white/70 transition-colors hover:bg-white/12 hover:text-white cursor-pointer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
         </button>
       </div>
     </div>

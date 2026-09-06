@@ -64,7 +64,7 @@ export default function ChatWidget() {
         aria-hidden={!open}
         className={cn(
           "fixed right-[22px] bottom-[96px] z-[75] flex w-[370px] max-w-[calc(100vw-44px)] flex-col overflow-hidden",
-          "rounded-[24px] border border-[#dbe6dd] bg-white shadow-[var(--shadow-lift)] origin-bottom-right",
+          "rounded-[20px] border border-[#e4ece7] bg-white shadow-[var(--shadow-soft-lift)] origin-bottom-right",
           "transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
           open
             ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
@@ -126,13 +126,13 @@ export default function ChatWidget() {
         </div>
 
         {/* Quick replies */}
-        <div className="flex flex-wrap gap-[7px] border-t border-[#e6efe8] px-[14px] pt-[12px]">
+        <div className="flex flex-wrap gap-[7px] border-t border-[#e4ece7] px-[14px] pt-[12px]">
           {quickReplies.map((q) => (
             <button
               key={q}
               type="button"
               onClick={() => send(q)}
-              className="rounded-full border border-[#cfe3d6] bg-white px-[12px] py-[6px] text-[12.5px] font-medium text-[#056839] transition-colors hover:bg-[#e8f6ee] cursor-pointer"
+              className="rounded-full border border-[#e4ece7] bg-white px-[12px] py-[6px] text-[12.5px] font-medium text-[#056839] transition-colors hover:bg-[#e8f6ee] cursor-pointer"
             >
               {q}
             </button>
@@ -152,7 +152,7 @@ export default function ChatWidget() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message…"
             aria-label="Message"
-            className="flex-1 rounded-full border border-[#dbe6dd] bg-white px-[16px] py-[11px] text-[14px] text-[#0a4a29] placeholder:text-[#8a988e] focus:border-[#50bc7e] focus:outline-none focus:ring-2 focus:ring-[#50bc7e]/30"
+            className="flex-1 rounded-full border border-[#e4ece7] bg-white px-[16px] py-[11px] text-[14px] text-[#0a4a29] placeholder:text-[#8a988e] focus:border-[#50bc7e] focus:outline-none focus:ring-2 focus:ring-[#50bc7e]/30"
           />
           <button
             type="submit"
@@ -174,7 +174,7 @@ export default function ChatWidget() {
         aria-expanded={open}
         className={cn(
           "group fixed right-[22px] bottom-[24px] z-[75] grid h-[60px] w-[60px] place-items-center rounded-full",
-          "bg-gradient-to-br from-[#0a4a29] to-[#056839] text-white shadow-[var(--shadow-lift)]",
+          "bg-gradient-to-br from-[#0a4a29] to-[#056839] text-white shadow-[var(--shadow-soft-lift)]",
           "transition-transform duration-300 hover:scale-105 cursor-pointer"
         )}
       >

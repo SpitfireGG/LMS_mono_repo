@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Breadcrumbs from "@/app/components/Breadcrumbs";
 import AnnouncementBar from "../components/AnnouncementBar";
 import NavigationBar from "../components/NavigationBar";
 import Footer from "../components/Footer";
@@ -101,18 +101,10 @@ export default function ContactPage() {
             style={{ background: "radial-gradient(58% 120% at 82% -10%, rgba(80,188,126,0.16), transparent 60%)" }}
           />
           <div className="w-full max-w-[1440px] mx-auto px-[100px] max-xl:px-[60px] max-sm:px-[30px]">
-            <nav className="flex items-center gap-[8px] text-[14px] text-[#566b5d]" aria-label="Breadcrumb">
-              <Link href="/" className="hover:text-[#056839]">Home</Link>
-              <span aria-hidden>/</span>
-              <span className="font-medium text-[#0a4a29]">Contact</span>
-            </nav>
+            <Breadcrumbs items={[{ label: "Contact" }]} />
 
             <div className="mt-[18px] max-w-[720px]">
-              <span className="chip text-[14px] text-[#0a4a29]">
-                <span className="h-[7px] w-[7px] rounded-full bg-[#50bc7e]" />
-                We reply within one business day
-              </span>
-              <h1 className="mt-[18px] text-[clamp(2.4rem,5vw,3.7rem)]/[1.04] font-medium tracking-[-0.03em] text-[#0a4a29]">
+              <h1 className="text-[clamp(2.4rem,5vw,3.7rem)]/[1.04] font-medium tracking-[-0.03em] text-[#0a4a29]">
                 Let&apos;s map out your <span className="marker">path to Australia</span>.
               </h1>
               <p className="text-pretty mt-[18px] text-[18px]/[1.6] text-[#566b5d]">
@@ -133,7 +125,7 @@ export default function ContactPage() {
                 href={m.href}
                 target={m.href.startsWith("http") ? "_blank" : undefined}
                 rel={m.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                className="lift group flex flex-col rounded-[22px] border border-[#dbe6dd] bg-white p-[24px] no-underline shadow-[var(--shadow-e1)]"
+                className="lift group flex flex-col rounded-[20px] border border-[#e4ece7] bg-white p-[24px] no-underline shadow-[var(--shadow-e1)]"
               >
                 <span className="grid h-[46px] w-[46px] place-items-center rounded-[14px] bg-[#e8f6ee] text-[#056839]">
                   <Icon name={m.icon} />
@@ -157,7 +149,7 @@ export default function ContactPage() {
 
             {/* Office info */}
             <aside className="flex flex-col gap-[20px] lg:sticky lg:top-[20px]">
-              <div className="rounded-[24px] border border-[#dbe6dd] bg-[#0a4a29] p-[28px] text-white shadow-[var(--shadow-e2)]">
+              <div className="rounded-[20px] border border-[#e4ece7] bg-[#0a4a29] p-[28px] text-white shadow-[var(--shadow-soft)]">
                 <p className="flex items-center gap-[9px] text-[13px] font-semibold uppercase tracking-[0.08em] text-[#8fe3b7]">
                   <span className="h-[7px] w-[7px] rounded-full bg-[#50bc7e]" /> Head office
                 </p>
@@ -188,7 +180,7 @@ export default function ContactPage() {
               </div>
 
               {/* Hours */}
-              <div className="rounded-[24px] border border-[#dbe6dd] bg-white p-[26px] shadow-[var(--shadow-e1)]">
+              <div className="rounded-[20px] border border-[#e4ece7] bg-white p-[26px] shadow-[var(--shadow-e1)]">
                 <div className="flex items-center gap-[10px]">
                   <span className="grid h-[38px] w-[38px] place-items-center rounded-[11px] bg-[#e8f6ee] text-[#056839]">
                     <Icon name="clock" className="h-[19px] w-[19px]" />
@@ -197,7 +189,7 @@ export default function ContactPage() {
                 </div>
                 <dl className="mt-[16px] flex flex-col">
                   {hours.map((h) => (
-                    <div key={h.day} className="flex items-center justify-between border-t border-[#e6efe8] py-[11px] text-[14.5px] first:border-t-0">
+                    <div key={h.day} className="flex items-center justify-between border-t border-[#e4ece7] py-[11px] text-[14.5px] first:border-t-0">
                       <dt className="text-[#566b5d]">{h.day}</dt>
                       <dd className={h.time === "Closed" ? "font-medium text-[#c0603e]" : "font-medium text-[#0a4a29]"}>{h.time}</dd>
                     </div>
@@ -223,7 +215,7 @@ export default function ContactPage() {
 
           <div className="mt-[28px] grid grid-cols-[1fr_360px] gap-[24px] max-lg:grid-cols-1">
             {/* Map */}
-            <div className="relative overflow-hidden rounded-[26px] border border-[#dbe6dd] shadow-[var(--shadow-e2)]">
+            <div className="relative overflow-hidden rounded-[20px] border border-[#e4ece7] shadow-[var(--shadow-soft)]">
               <iframe
                 title="NAATI Excellence Academy — 350 Collins Street, Melbourne"
                 src={HQ.embed}
@@ -231,7 +223,7 @@ export default function ContactPage() {
                 referrerPolicy="no-referrer-when-downgrade"
                 className="h-full min-h-[420px] w-full border-0 grayscale-[0.15]"
               />
-              <div className="pointer-events-none absolute left-[20px] top-[20px] max-w-[280px] rounded-[16px] border border-[#dbe6dd] bg-white/95 p-[16px] shadow-[var(--shadow-e2)] backdrop-blur">
+              <div className="pointer-events-none absolute left-[20px] top-[20px] max-w-[280px] rounded-[16px] border border-[#e4ece7] bg-white/95 p-[16px] shadow-[var(--shadow-soft)] backdrop-blur">
                 <p className="text-[13px] font-semibold uppercase tracking-[0.06em] text-[#056839]">NAATI Excellence Academy</p>
                 <p className="mt-[6px] text-[15px]/[1.5] text-[#0a4a29]">{HQ.line1}, {HQ.line2}</p>
               </div>
@@ -239,7 +231,7 @@ export default function ContactPage() {
 
             {/* Getting here */}
             <div className="flex flex-col gap-[16px]">
-              <div className="rounded-[22px] border border-[#dbe6dd] bg-white p-[24px] shadow-[var(--shadow-e1)]">
+              <div className="rounded-[20px] border border-[#e4ece7] bg-white p-[24px] shadow-[var(--shadow-e1)]">
                 <div className="flex items-center gap-[10px]">
                   <span className="grid h-[38px] w-[38px] place-items-center rounded-[11px] bg-[#e8f6ee] text-[#056839]">
                     <Icon name="train" className="h-[19px] w-[19px]" />
@@ -284,7 +276,7 @@ export default function ContactPage() {
           </div>
           <div className="mt-[28px] grid grid-cols-2 gap-[20px] max-md:grid-cols-1">
             {departments.map((d) => (
-              <div key={d.name} className="rounded-[22px] border border-[#dbe6dd] bg-white p-[26px] shadow-[var(--shadow-e1)]">
+              <div key={d.name} className="rounded-[20px] border border-[#e4ece7] bg-white p-[26px] shadow-[var(--shadow-e1)]">
                 <h3 className="text-[18px] font-semibold text-[#0a4a29]">{d.name}</h3>
                 <p className="mt-[6px] text-[14.5px]/[1.55] text-[#566b5d]">{d.desc}</p>
                 <div className="mt-[16px] flex flex-wrap items-center gap-x-[20px] gap-y-[8px] text-[14px]">
@@ -304,7 +296,7 @@ export default function ContactPage() {
         <section className="mt-[70px] max-lg:mt-[52px] w-full max-w-[1440px] mx-auto px-[100px] max-xl:px-[60px] max-sm:px-[30px]">
           <div className="grid grid-cols-2 gap-[20px] max-md:grid-cols-1">
             {campuses.map((c) => (
-              <div key={c.city} className="flex items-start justify-between gap-[16px] rounded-[22px] border border-[#dbe6dd] bg-[#f2f8f4] p-[26px]">
+              <div key={c.city} className="flex items-start justify-between gap-[16px] rounded-[20px] border border-[#e4ece7] bg-[#f2f8f4] p-[26px]">
                 <div>
                   <p className="text-[12.5px] font-semibold uppercase tracking-[0.07em] text-[#056839]">{c.tag}</p>
                   <h3 className="mt-[6px] text-[20px] font-semibold text-[#0a4a29]">{c.city}</h3>

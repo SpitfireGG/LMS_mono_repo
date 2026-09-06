@@ -18,7 +18,7 @@ export default function PaymentStatusPage() {
       <div className="mt-[60px] max-sm:mt-[40px]">
         <Suspense
           fallback={
-            <div className="mx-auto h-[380px] w-full max-w-[620px] animate-pulse rounded-[24px] bg-white/70" />
+            <div className="mx-auto h-[380px] w-full max-w-[620px] animate-pulse rounded-[20px] bg-white/70" />
           }
         >
           <PaymentStatusClient />

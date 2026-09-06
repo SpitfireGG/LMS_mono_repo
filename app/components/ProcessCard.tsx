@@ -55,7 +55,7 @@ export default function ProcessCard({
   return (
     <div
       className={cn(
-        "border border-[#cfe3d6] border-solid transition-colors duration-300 flex flex-col items-start overflow-clip px-[59px] max-xl:px-[40px] max-sm:px-[30px] py-[40px] max-xl:py-[30px] max-sm:py-[20px] relative rounded-[45px] shadow-[var(--shadow-e2)] shrink-0 w-full max-w-[1234px] cursor-pointer",
+        "border border-[#e4ece7] border-solid transition-colors duration-300 flex flex-col items-start overflow-clip px-[59px] max-xl:px-[40px] max-sm:px-[30px] py-[40px] max-xl:py-[30px] max-sm:py-[20px] relative rounded-[32px] shadow-[var(--shadow-soft)] shrink-0 w-full max-w-[1234px] cursor-pointer",
         isExpanded ? "bg-[#056839]" : "bg-[#e8f6ee]",
         className
       )}

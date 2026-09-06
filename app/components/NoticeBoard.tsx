@@ -55,7 +55,7 @@ export default function NoticeBoard() {
         aria-hidden={!open}
         className={cn(
           "fixed left-[90px] top-1/2 z-[70] w-[350px] max-w-[calc(100vw-112px)] origin-left",
-          "rounded-[22px] border border-[#dbe6dd] bg-white shadow-[var(--shadow-lift)]",
+          "rounded-[20px] border border-[#e4ece7] bg-white shadow-[var(--shadow-soft-lift)]",
           "transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
           open
             ? "pointer-events-auto -translate-y-1/2 scale-100 opacity-100"
@@ -116,7 +116,7 @@ export default function NoticeBoard() {
         {/* Footer */}
         <a
           href="#blogs"
-          className="block rounded-b-[22px] border-t border-[#e6efe8] py-[13px] text-center text-[14px] font-medium text-[#056839] no-underline transition-colors hover:bg-[#e8f6ee]"
+          className="block rounded-b-[22px] border-t border-[#e4ece7] py-[13px] text-center text-[14px] font-medium text-[#056839] no-underline transition-colors hover:bg-[#e8f6ee]"
         >
           View all announcements
         </a>
@@ -130,7 +130,7 @@ export default function NoticeBoard() {
         aria-expanded={open}
         className={cn(
           "group fixed left-[22px] top-1/2 -translate-y-1/2 z-[70] grid h-[56px] w-[56px] place-items-center rounded-full",
-          "border border-[#cfe3d6] bg-white shadow-[var(--shadow-lift)] transition-transform duration-300 hover:scale-105 cursor-pointer"
+          "border border-[#e4ece7] bg-white shadow-[var(--shadow-soft-lift)] transition-transform duration-300 hover:scale-105 cursor-pointer"
         )}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}

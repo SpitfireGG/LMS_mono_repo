@@ -38,7 +38,7 @@ export default function CTA({ className }: CTAProps) {
         className
       )}
     >
-      <div className="bg-[#0a4a29] flex items-center justify-between px-[60px] max-xl:px-[40px] max-sm:px-[30px] py-0 gap-[10px] relative rounded-[45px] shrink-0 w-full my-[23px] overflow-hidden">
+      <div className="bg-[#0a4a29] flex items-center justify-between px-[60px] max-xl:px-[40px] max-sm:px-[30px] py-0 gap-[10px] relative rounded-[32px] shrink-0 w-full my-[23px] overflow-hidden">
         <div className="flex flex-col gap-[24px] items-start relative shrink-0 flex-3 max-lg:flex-4 py-[52px] max-sm:py-[36px] z-10">
           <h3 className="font-medium leading-[1.15] relative shrink-0 text-[34px] max-sm:text-[28px] text-white max-w-[500px]">
             Ready to build a future you&apos;re{" "}

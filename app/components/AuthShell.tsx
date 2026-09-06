@@ -9,10 +9,9 @@ type Mode = "login" | "signup";
 
 const copy: Record<
   Mode,
-  { eyebrow: string; heading: React.ReactNode; benefits: string[] }
+  { heading: React.ReactNode; benefits: string[] }
 > = {
   login: {
-    eyebrow: "Welcome back",
     heading: (
       <>
         Pick up right where you <span className="text-[#8fe3b7]">left off</span>.
@@ -25,7 +24,6 @@ const copy: Record<
     ],
   },
   signup: {
-    eyebrow: "Start for free",
     heading: (
       <>
         Learn what <span className="text-[#8fe3b7]">moves you</span> forward.
@@ -60,10 +58,7 @@ export default function AuthShell({ mode }: { mode: Mode }) {
         </Link>
 
         <div className="relative max-w-[440px]">
-          <span className="inline-flex items-center gap-[8px] rounded-full bg-white/10 px-[14px] py-[6px] text-[13px] font-semibold uppercase tracking-[0.07em] text-[#8fe3b7]">
-            <span className="h-[6px] w-[6px] rounded-full bg-[#50bc7e]" /> {c.eyebrow}
-          </span>
-          <h2 className="mt-[22px] text-[clamp(2rem,3vw,2.7rem)]/[1.12] font-medium tracking-[-0.02em]">
+          <h2 className="text-[clamp(2rem,3vw,2.7rem)]/[1.12] font-medium tracking-[-0.02em]">
             {c.heading}
           </h2>
           <ul className="mt-[28px] flex flex-col gap-[14px]">
@@ -110,7 +105,7 @@ export default function AuthShell({ mode }: { mode: Mode }) {
           </Link>
           <Link
             href="/"
-            className="ml-auto inline-flex items-center gap-[7px] rounded-full border border-[#cfe3d6] bg-white px-[16px] py-[8px] text-[14px] font-medium text-[#0a4a29] no-underline transition-colors hover:bg-[#e8f6ee]"
+            className="ml-auto inline-flex items-center gap-[7px] rounded-full border border-[#e4ece7] bg-white px-[16px] py-[8px] text-[14px] font-medium text-[#0a4a29] no-underline transition-colors hover:bg-[#e8f6ee]"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
             Back to site

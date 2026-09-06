@@ -1,81 +1,81 @@
 "use client";
 
 import { useState, FormEvent } from "react";
+import { useSubscribe } from "@/app/lib/api/hooks";
 import { cn } from "../lib/utils";
-import Button from "./Button";
 
 type SubscriptionFormProps = {
   className?: string;
 };
 
+const buttonLabel = {
+  idle: "Subscribe",
+  pending: "Sending…",
+  success: "Subscribed",
+  error: "Try again",
+} as const;
+
 export default function SubscriptionForm({ className }: SubscriptionFormProps) {
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<
-    "idle" | "submitting" | "success" | "error"
-  >("idle");
+  const { mutate, status, error, reset } = useSubscribe({
+    onSuccess: () => setEmail(""),
+  });
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setStatus("submitting");
-
-    // TODO: Add your subscription API call here
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setEmail("");
-      // TODO: Add success message here
-      setStatus("success");
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    } catch (error) {
-      // TODO: Add error message here
-      void error;
-      setStatus("error");
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    } finally {
-      setStatus("idle");
-    }
+    if (!email.trim()) return;
+    mutate(email.trim());
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className={cn(
-        "bg-[#292a32] flex gap-[20px] items-start overflow-clip relative rounded-[14px] xl:mr-px flex-3 max-w-[634px]",
-        "px-[40px] max-xl:px-[30px] py-[58px] max-xl:py-[40px] max-md:px-[20px] max-md:py-[30px]",
-        "max-lg:flex-col",
-        "max-md:flex-row max-sm:flex-col max-sm:w-full",
-        className
-      )}
       method="POST"
+      className={cn("w-full max-w-[460px] shrink-0", className)}
     >
-      <input
-        type="email"
-        name="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        autoComplete="email"
-        required
-        disabled={status === "submitting"}
+      <div className="flex items-center gap-[10px] max-sm:flex-col max-sm:items-stretch">
+        <label htmlFor="newsletter-email" className="sr-only">
+          Email address
+        </label>
+        <input
+          id="newsletter-email"
+          type="email"
+          name="email"
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (status === "error") reset();
+          }}
+          placeholder="you@example.com"
+          autoComplete="email"
+          required
+          disabled={status === "pending"}
+          className="h-[54px] min-w-0 flex-1 rounded-[14px] border border-white/20 bg-white/[0.07] px-[20px] text-[15.5px] text-white transition-colors duration-300 placeholder:text-white/40 hover:border-white/35 focus:border-[#50bc7e] focus:bg-white/[0.1] focus:outline-none disabled:opacity-50"
+        />
+        <button
+          type="submit"
+          disabled={status === "pending"}
+          className="h-[54px] shrink-0 cursor-pointer rounded-[14px] bg-[#50bc7e] px-[28px] text-[15.5px] font-medium text-[#0a4a29] transition-all duration-300 hover:-translate-y-0.5 hover:bg-white disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+        >
+          {buttonLabel[status]}
+        </button>
+      </div>
+
+      <p
+        role="status"
+        aria-live="polite"
         className={cn(
-          "border border-solid border-white flex flex-1 w-full items-start overflow-clip px-[35px] py-[21px] max-xl:py-[17px] max-md:py-[12px] max-md:px-[20px] relative rounded-[14px] font-normal text-[18px]/[normal] max-xl:leading-[24px] text-white placeholder:text-white bg-transparent focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#292a32] disabled:opacity-50 disabled:cursor-not-allowed"
+          "mt-[10px] min-h-[19px] text-[13.5px] transition-opacity duration-300",
+          status === "success" && "text-[#9fe9c1]",
+          status === "error" && "text-[#f0b7a0]",
+          (status === "idle" || status === "pending") && "text-white/45",
         )}
-      />
-      <Button
-        type="submit"
-        variant="tertiary"
-        className="px-[35px] py-[19px] max-md:px-[20px] max-md:py-[10px] rounded-[14px] shrink-0 max-lg:w-full max-lg:text-[16px]/[30px] justify-center max-md:w-auto max-sm:w-full"
-        disabled={status === "submitting"}
       >
-        {
-          {
-            idle: "Subscribe to news",
-            submitting: "Please wait...",
-            success: "Thank you!",
-            error: "Try again",
-          }[status]
-        }
-      </Button>
+        {status === "success" && "You're on the list — check your inbox."}
+        {status === "error" &&
+          (error?.message || "Something went wrong. Please try again.")}
+        {status === "idle" && "One email a month. Unsubscribe anytime."}
+      </p>
     </form>
   );
 }

@@ -11,24 +11,27 @@ const covers = [
   { bg: "#e8f6ee", ink: "#0a4a29", tagClass: "bg-[#0a4a29] text-white" },
 ];
 
+const fallbackPosts: ApiBlogPostItem[] = [
+  { id: "fb-1", slug: "naati-ccl-first-attempt-tips", locale: "en", status: "PUBLISHED", tag: "NAATI CCL", readTime: "6 min read", title: "How to Pass NAATI CCL on Your First Attempt", excerpt: "Proven strategies, practice routines, and marking criteria you must know before you book your test.", content: "NAATI CCL guidance.", coverImage: null, author: "Dr. Anita Sharma", metaTitle: null, metaDescription: null, canonicalUrl: null, noindex: false, nofollow: false, ogImageUrl: null, ogImageAlt: null, publishedAt: new Date().toISOString(), contentUpdatedAt: new Date().toISOString(), deletedAt: null, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+  { id: "fb-2", slug: "pte-79-plus-booster-plan", locale: "en", status: "PUBLISHED", tag: "PTE", readTime: "5 min read", title: "PTE 79+ Booster: Your 30-Day Study Plan", excerpt: "A week-by-week plan that takes you from 58 to 79+, with templates and daily drills.", content: "PTE plan.", coverImage: null, author: "Michael Chen", metaTitle: null, metaDescription: null, canonicalUrl: null, noindex: false, nofollow: false, ogImageUrl: null, ogImageAlt: null, publishedAt: new Date().toISOString(), contentUpdatedAt: new Date().toISOString(), deletedAt: null, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+  { id: "fb-3", slug: "ielts-band-7-intensive-method", locale: "en", status: "PUBLISHED", tag: "IELTS", readTime: "7 min read", title: "IELTS Band 7+ Intensive: Writing & Speaking Secrets", excerpt: "Band 9 examiners break down exactly what separates a 6.5 from a 7.5.", content: "IELTS method.", coverImage: null, author: "Michael Chen", metaTitle: null, metaDescription: null, canonicalUrl: null, noindex: false, nofollow: false, ogImageUrl: null, ogImageAlt: null, publishedAt: new Date().toISOString(), contentUpdatedAt: new Date().toISOString(), deletedAt: null, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+];
+
 export default function BlogListing({ className }: { className?: string }) {
   const { data, isLoading, error } = useBlogs({ limit: 3 });
-  const blogPosts = data?.data ?? [];
+  const apiPosts = data?.data ?? [];
+  const blogPosts = apiPosts.length > 0 ? apiPosts : fallbackPosts;
 
-  if (isLoading) {
+  if (isLoading && apiPosts.length === 0) {
     return (
       <div className={cn("px-[100px] max-xl:px-[60px] max-sm:px-[30px]", className)} id="blogs">
         <div className="grid grid-cols-3 gap-[40px] max-xl:gap-[30px] max-lg:grid-cols-2 max-md:grid-cols-1">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="animate-pulse bg-white border border-[#cfe3d6] border-solid rounded-[26px] shadow-[var(--shadow-e2)] overflow-hidden flex flex-col h-[400px]" />
+            <div key={i} className="animate-pulse bg-white border border-[#e4ece7] border-solid rounded-[20px] shadow-[var(--shadow-soft)] overflow-hidden flex flex-col h-[400px]" />
           ))}
         </div>
       </div>
     );
-  }
-
-  if (error || blogPosts.length === 0) {
-    return null;
   }
 
   return (
@@ -37,7 +40,7 @@ export default function BlogListing({ className }: { className?: string }) {
         {blogPosts.map((post, index) => {
           const cover = covers[index % covers.length];
           return (
-            <div key={post.id} className="lift bg-white border border-[#cfe3d6] border-solid rounded-[26px] shadow-[var(--shadow-e2)] overflow-hidden flex flex-col">
+            <div key={post.id} className="lift bg-white border border-[#e4ece7] border-solid rounded-[20px] shadow-[var(--shadow-soft)] overflow-hidden flex flex-col">
               {/* Cover — typographic panel in the brand triad */}
               <div className="relative h-[170px] overflow-hidden" style={{ backgroundColor: cover.bg }}>
                 <span className={cn("absolute top-[18px] left-[20px] px-[12px] py-[5px] rounded-[7px] font-medium text-[13.5px]", cover.tagClass)}>

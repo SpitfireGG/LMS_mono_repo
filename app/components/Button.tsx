@@ -27,15 +27,15 @@ export default function Button({
   ...props
 }: ButtonProps | AnchorProps) {
   const baseStyles =
-    "group relative inline-flex items-center overflow-hidden rounded-[16px] shrink-0 font-medium text-[20px] text-center cursor-pointer transition-[transform,box-shadow,background-color] duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 px-[35px] py-[20px] max-xl:px-[25px] max-xl:py-[15px] max-sm:px-[20px] max-sm:py-[10px] leading-[28px]";
+    "group relative inline-flex items-center overflow-hidden rounded-[14px] shrink-0 font-medium text-[17px] text-center cursor-pointer transition-[transform,box-shadow,background-color] duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 px-[28px] py-[16px] max-xl:px-[24px] max-xl:py-[14px] max-sm:px-[20px] max-sm:py-[12px] leading-[24px]";
 
   const variantStyles = {
     primary:
-      "bg-[#0a4a29] text-white shadow-[var(--shadow-e2)] hover:bg-[#0d5e34] hover:shadow-[var(--shadow-lift)]",
+      "bg-[#0a4a29] text-white shadow-[var(--shadow-soft)] hover:bg-[#0d5e34] hover:shadow-[var(--shadow-soft-lift)]",
     secondary:
       "border border-[#0a4a29] border-solid text-[#0a4a29] hover:bg-[#e8f6ee]",
     tertiary:
-      "bg-[#056839] text-white shadow-[var(--shadow-e2)] hover:bg-[#0a4a29] hover:shadow-[var(--shadow-lift)]",
+      "bg-[#056839] text-white shadow-[var(--shadow-soft)] hover:bg-[#0a4a29] hover:shadow-[var(--shadow-soft-lift)]",
   };
 
   const combinedClassName = cn(baseStyles, variantStyles[variant], className);

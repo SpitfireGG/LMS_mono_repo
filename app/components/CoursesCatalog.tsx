@@ -59,7 +59,7 @@ function CheckRow({
       <span
         className={cn(
           "grid h-[20px] w-[20px] shrink-0 place-items-center rounded-[6px] border transition-colors",
-          checked ? "border-[#056839] bg-[#056839]" : "border-[#cfe3d6] bg-white group-hover:border-[#9ec7ac]"
+          checked ? "border-[#056839] bg-[#056839]" : "border-[#e4ece7] bg-white group-hover:border-[#9ec7ac]"
         )}
       >
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
@@ -94,7 +94,7 @@ function RadioRow({
       <span
         className={cn(
           "grid h-[20px] w-[20px] shrink-0 place-items-center rounded-full border transition-colors",
-          checked ? "border-[#056839]" : "border-[#cfe3d6] group-hover:border-[#9ec7ac]"
+          checked ? "border-[#056839]" : "border-[#e4ece7] group-hover:border-[#9ec7ac]"
         )}
       >
         <span className={cn("h-[10px] w-[10px] rounded-full transition-colors", checked ? "bg-[#056839]" : "bg-transparent")} />
@@ -106,7 +106,7 @@ function RadioRow({
 
 function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="border-t border-[#e6efe8] py-[18px] first:border-t-0 first:pt-0">
+    <div className="border-t border-[#e4ece7] py-[18px] first:border-t-0 first:pt-0">
       <p className="mb-[6px] text-[13px] font-semibold uppercase tracking-[0.06em] text-[#8a988e]">
         {title}
       </p>
@@ -191,7 +191,7 @@ export default function CoursesCatalog() {
         {/* ── Sidebar filters ─────────────────────────────── */}
         <aside
           className={cn(
-            "rounded-[22px] border border-[#dbe6dd] bg-white p-[24px] shadow-[var(--shadow-e1)]",
+            "rounded-[20px] border border-[#e4ece7] bg-white p-[24px] shadow-[var(--shadow-e1)]",
             "lg:sticky lg:top-[20px]",
             showFilters ? "block" : "hidden lg:block"
           )}
@@ -259,7 +259,7 @@ export default function CoursesCatalog() {
                 onChange={handleSearch}
                 placeholder="Search courses, topics or tutors…"
                 aria-label="Search courses"
-                className="w-full rounded-[16px] border border-[#dbe6dd] bg-white py-[14px] pl-[48px] pr-[16px] text-[15px] text-[#0a4a29] placeholder:text-[#8a988e] shadow-[var(--shadow-e1)] focus:border-[#50bc7e] focus:outline-none focus:ring-2 focus:ring-[#50bc7e]/30"
+                className="w-full rounded-[16px] border border-[#e4ece7] bg-white py-[14px] pl-[48px] pr-[16px] text-[15px] text-[#0a4a29] placeholder:text-[#8a988e] shadow-[var(--shadow-e1)] focus:border-[#50bc7e] focus:outline-none focus:ring-2 focus:ring-[#50bc7e]/30"
               />
             </div>
             <div className="flex items-center justify-between gap-[12px]">
@@ -271,7 +271,7 @@ export default function CoursesCatalog() {
                 <button
                   type="button"
                   onClick={() => setShowFilters((v) => !v)}
-                  className="flex items-center gap-[8px] rounded-[12px] border border-[#cfe3d6] bg-white px-[16px] py-[10px] text-[14px] font-medium text-[#0a4a29] lg:hidden cursor-pointer"
+                  className="flex items-center gap-[8px] rounded-[12px] border border-[#e4ece7] bg-white px-[16px] py-[10px] text-[14px] font-medium text-[#0a4a29] lg:hidden cursor-pointer"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                     <path d="M4 6h16M7 12h10M10 18h4" />
@@ -284,7 +284,7 @@ export default function CoursesCatalog() {
                     value={sort}
                     onChange={(e) => { setSort(e.target.value as SortKey); handleFilterChange(); }}
                     aria-label="Sort courses"
-                    className="rounded-[12px] border border-[#cfe3d6] bg-white px-[14px] py-[10px] text-[14px] font-medium text-[#0a4a29] focus:border-[#50bc7e] focus:outline-none cursor-pointer"
+                    className="rounded-[12px] border border-[#e4ece7] bg-white px-[14px] py-[10px] text-[14px] font-medium text-[#0a4a29] focus:border-[#50bc7e] focus:outline-none cursor-pointer"
                   >
                     {sortOptions.map((o) => (
                       <option key={o.key} value={o.key}>
@@ -301,11 +301,11 @@ export default function CoursesCatalog() {
           {isLoading ? (
             <div className="grid grid-cols-2 gap-[24px] max-md:grid-cols-1">
               {[...Array(8)].map((_, i) => (
-                <div key={i} className="animate-pulse bg-white border border-[#cfe3d6] rounded-[26px] h-[380px]" />
+                <div key={i} className="animate-pulse bg-white border border-[#e4ece7] rounded-[20px] h-[380px]" />
               ))}
             </div>
           ) : error ? (
-            <div className="flex flex-col items-center justify-center rounded-[22px] border border-dashed border-[#ff6b6b] bg-white py-[80px] text-center">
+            <div className="flex flex-col items-center justify-center rounded-[20px] border border-dashed border-[#ff6b6b] bg-white py-[80px] text-center">
               <div className="grid h-[56px] w-[56px] place-items-center rounded-full bg-[#ffe8e8]">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ff6b6b" strokeWidth="2" strokeLinecap="round">
                   <circle cx="12" cy="12" r="10" />
@@ -332,7 +332,7 @@ export default function CoursesCatalog() {
               <Pagination page={safePage} pageCount={pageCount} onChange={setPage} className="mt-[36px]" />
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center rounded-[22px] border border-dashed border-[#cfe3d6] bg-white py-[80px] text-center">
+            <div className="flex flex-col items-center justify-center rounded-[20px] border border-dashed border-[#e4ece7] bg-white py-[80px] text-center">
               <div className="grid h-[56px] w-[56px] place-items-center rounded-full bg-[#e8f6ee]">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#056839" strokeWidth="2" strokeLinecap="round">
                   <circle cx="11" cy="11" r="7" />

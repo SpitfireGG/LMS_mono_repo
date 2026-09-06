@@ -68,7 +68,7 @@ export default function WishlistButton({
           "inline-flex items-center justify-center gap-[9px] rounded-[14px] border px-[20px] py-[13px] text-[15px] font-medium transition-colors duration-300 cursor-pointer disabled:opacity-60",
           wishlisted
             ? "border-[#c0603e] bg-[#fbeee9] text-[#c0603e]"
-            : "border-[#cfe3d6] bg-white text-[#0a4a29] hover:bg-[#e8f6ee]",
+            : "border-[#e4ece7] bg-white text-[#0a4a29] hover:bg-[#e8f6ee]",
           className
         )}
       >

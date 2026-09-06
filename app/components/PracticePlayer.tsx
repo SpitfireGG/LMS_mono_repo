@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Breadcrumbs from "@/app/components/Breadcrumbs";
+import { LiveWaveform, NoiseCheck } from "./AudioMeter";
 import Link from "next/link";
 import { cn } from "@/app/lib/utils";
 import { assetUrl } from "@/app/lib/api/client";
@@ -323,11 +325,7 @@ export default function PracticePlayer({ slug }: { slug: string }) {
       {/* Header */}
       <div className="mb-[20px] flex flex-wrap items-end justify-between gap-[16px]">
         <div>
-          <nav className="flex items-center gap-[8px] text-[14px] text-[#566b5d]" aria-label="Breadcrumb">
-            <Link href="/practice" className="hover:text-[#056839]">Practice</Link>
-            <span aria-hidden>/</span>
-            <span className="font-medium text-[#0a4a29]">{session.title}</span>
-          </nav>
+          <Breadcrumbs items={[{ label: "Practice", href: "/practice" }, { label: session.title }]} />
           <h1 className="mt-[10px] text-[30px]/[1.15] font-medium tracking-[-0.02em] text-[#0a4a29] max-sm:text-[24px]">
             {session.title}
           </h1>
@@ -346,7 +344,7 @@ export default function PracticePlayer({ slug }: { slug: string }) {
         <button
           type="button"
           onClick={() => setShowPdf((v) => !v)}
-          className="rounded-[12px] border border-[#cfe3d6] bg-white px-[16px] py-[10px] text-[14px] font-medium text-[#0a4a29] transition-colors hover:bg-[#e8f6ee] cursor-pointer max-lg:hidden"
+          className="rounded-[12px] border border-[#e4ece7] bg-white px-[16px] py-[10px] text-[14px] font-medium text-[#0a4a29] transition-colors hover:bg-[#e8f6ee] cursor-pointer max-lg:hidden"
         >
           {showPdf ? "Hide script" : "Show script"}
         </button>
@@ -369,8 +367,8 @@ export default function PracticePlayer({ slug }: { slug: string }) {
         <div className={cn("grid gap-[22px] items-start", showPdf ? "grid-cols-[1fr_390px] max-lg:grid-cols-1" : "grid-cols-1")}>
           {/* ── Script ─────────────────────────────────────── */}
           {showPdf && (
-            <section className="overflow-hidden rounded-[20px] border border-[#dbe6dd] bg-white shadow-[var(--shadow-e1)]">
-              <header className="flex items-center justify-between gap-[12px] border-b border-[#e6efe8] px-[18px] py-[12px]">
+            <section className="overflow-hidden rounded-[20px] border border-[#e4ece7] bg-white shadow-[var(--shadow-e1)]">
+              <header className="flex items-center justify-between gap-[12px] border-b border-[#e4ece7] px-[18px] py-[12px]">
                 <p className="text-[14px] font-semibold text-[#0a4a29]">
                   Script &amp; questions
                   {session.pdfName && (
@@ -415,7 +413,7 @@ export default function PracticePlayer({ slug }: { slug: string }) {
 
           {/* ── Playback + recording ───────────────────────── */}
           <aside className="flex flex-col gap-[18px] lg:sticky lg:top-[16px]">
-            <section className="rounded-[20px] border border-[#dbe6dd] bg-white p-[20px] shadow-[var(--shadow-e1)]">
+            <section className="rounded-[20px] border border-[#e4ece7] bg-white p-[20px] shadow-[var(--shadow-e1)]">
               <p className="text-[14px] font-semibold text-[#0a4a29]">Audio brief</p>
 
               {mediaHref ? (
@@ -471,7 +469,7 @@ export default function PracticePlayer({ slug }: { slug: string }) {
 
                   <div className="mt-[12px] flex items-center gap-[10px]">
                     <button type="button" onClick={() => seekBy(-10)} aria-label="Back 10 seconds"
-                      className="grid h-[38px] w-[38px] place-items-center rounded-full border border-[#cfe3d6] text-[#0a4a29] transition-colors hover:bg-[#e8f6ee] cursor-pointer">
+                      className="grid h-[38px] w-[38px] place-items-center rounded-full border border-[#e4ece7] text-[#0a4a29] transition-colors hover:bg-[#e8f6ee] cursor-pointer">
                       {Icon.back}
                     </button>
                     <button type="button" onClick={toggle} aria-label={playing ? "Pause" : "Play"}
@@ -479,7 +477,7 @@ export default function PracticePlayer({ slug }: { slug: string }) {
                       {playing ? Icon.pause : Icon.play}
                     </button>
                     <button type="button" onClick={() => seekBy(10)} aria-label="Forward 10 seconds"
-                      className="grid h-[38px] w-[38px] place-items-center rounded-full border border-[#cfe3d6] text-[#0a4a29] transition-colors hover:bg-[#e8f6ee] cursor-pointer">
+                      className="grid h-[38px] w-[38px] place-items-center rounded-full border border-[#e4ece7] text-[#0a4a29] transition-colors hover:bg-[#e8f6ee] cursor-pointer">
                       {Icon.forward}
                     </button>
 
@@ -491,7 +489,7 @@ export default function PracticePlayer({ slug }: { slug: string }) {
                         if (mediaRef.current) mediaRef.current.playbackRate = next;
                       }}
                       aria-label="Playback speed"
-                      className="ml-auto rounded-[10px] border border-[#cfe3d6] bg-white px-[10px] py-[8px] text-[13px] font-medium text-[#0a4a29] cursor-pointer"
+                      className="ml-auto rounded-[10px] border border-[#e4ece7] bg-white px-[10px] py-[8px] text-[13px] font-medium text-[#0a4a29] cursor-pointer"
                     >
                       {SPEEDS.map((s) => (
                         <option key={s} value={s}>{s}×</option>
@@ -509,7 +507,7 @@ export default function PracticePlayer({ slug }: { slug: string }) {
             </section>
 
             {/* Recorder */}
-            <section className="rounded-[20px] border border-[#dbe6dd] bg-white p-[20px] shadow-[var(--shadow-e1)]">
+            <section className="rounded-[20px] border border-[#e4ece7] bg-white p-[20px] shadow-[var(--shadow-e1)]">
               <p className="text-[14px] font-semibold text-[#0a4a29]">Your interpretation</p>
               <p className="mt-[4px] text-[13px]/[1.5] text-[#566b5d]">
                 Start the run to play the brief and record yourself at the same time.
@@ -535,19 +533,15 @@ export default function PracticePlayer({ slug }: { slug: string }) {
                     )}
                   </div>
 
-                  {/* Live input level */}
-                  {recorder.recording && (
-                    <div className="mt-[12px]">
-                      <div className="h-[6px] w-full overflow-hidden rounded-full bg-[#eef4ee]">
-                        <div
-                          className="h-full rounded-full bg-[#50bc7e] transition-[width] duration-75"
-                          style={{ width: `${Math.min(100, Math.round(recorder.level * 140))}%` }}
-                        />
-                      </div>
-                      <p className="mt-[6px] text-[12px] text-[#8a988e]">
-                        {recorder.level < 0.02 ? "No sound detected — check your microphone" : "Recording…"}
-                      </p>
-                    </div>
+                  {/* Live amplitude */}
+                  <LiveWaveform
+                    level={recorder.level}
+                    active={recorder.recording}
+                    className="mt-[14px]"
+                  />
+
+                  {!recorder.recording && !recorder.blob && (
+                    <NoiseCheck className="mt-[14px]" />
                   )}
 
                   {recorder.error && (
@@ -575,7 +569,7 @@ export default function PracticePlayer({ slug }: { slug: string }) {
                           </Link>
                         )}
                         <a href={recordingUrl} download={`${session.slug}-take.webm`}
-                          className="rounded-[11px] border border-[#cfe3d6] bg-white px-[14px] py-[9px] text-[13.5px] font-medium text-[#0a4a29] no-underline hover:bg-[#e8f6ee]">
+                          className="rounded-[11px] border border-[#e4ece7] bg-white px-[14px] py-[9px] text-[13.5px] font-medium text-[#0a4a29] no-underline hover:bg-[#e8f6ee]">
                           Download
                         </a>
                         <button type="button" onClick={recorder.discard}
@@ -592,7 +586,7 @@ export default function PracticePlayer({ slug }: { slug: string }) {
 
             {/* Saved takes */}
             {isAuthenticated && attempts && attempts.length > 0 && (
-              <section className="rounded-[20px] border border-[#dbe6dd] bg-white p-[20px] shadow-[var(--shadow-e1)]">
+              <section className="rounded-[20px] border border-[#e4ece7] bg-white p-[20px] shadow-[var(--shadow-e1)]">
                 <p className="text-[14px] font-semibold text-[#0a4a29]">
                   Saved takes <span className="font-normal text-[#8a988e]">({attempts.length})</span>
                 </p>

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { cn } from "@/app/lib/utils";
+import Breadcrumbs from "@/app/components/Breadcrumbs";
 import Link from "next/link";
 import AnnouncementBar from "../components/AnnouncementBar";
 import NavigationBar from "../components/NavigationBar";
@@ -32,13 +34,14 @@ function ValueIcon({ name }: { name: string }) {
   }
 }
 
+/* Bento footprint per value — spans collapse to a plain stack below lg. */
 const values = [
-  { icon: "target", title: "Outcome-obsessed", body: "We measure ourselves by your result — the pass, the points, the job. Everything else is secondary." },
-  { icon: "cap", title: "Taught by practitioners", body: "Our tutors are certified, working professionals who know exactly what the exam and the industry demand." },
-  { icon: "doc", title: "Exam-accurate practice", body: "Mock tests and drills that mirror the real thing, so test day feels like just another practice run." },
-  { icon: "clock", title: "Built around real life", body: "Self-paced lessons with lifetime access, plus live classes — so learning fits around work and family." },
-  { icon: "heart", title: "Real human support", body: "Advisors and tutors who actually reply, and a community that keeps you moving when motivation dips." },
-  { icon: "scale", title: "Fair & transparent", body: "Clear pricing, no lock-in, lifetime access, and a first course that's genuinely free." },
+  { icon: "target", title: "Outcome-obsessed", body: "We measure ourselves by your result — the pass, the points, the job. Everything else is secondary.", span: "col-span-2 row-span-2", featured: true },
+  { icon: "cap", title: "Taught by practitioners", body: "Our tutors are certified, working professionals who know exactly what the exam and the industry demand.", span: "col-span-4", wide: true },
+  { icon: "doc", title: "Exam-accurate practice", body: "Mock tests and drills that mirror the real thing, so test day feels like just another practice run.", span: "col-span-2" },
+  { icon: "clock", title: "Built around real life", body: "Self-paced lessons with lifetime access, plus live classes — so learning fits around work and family.", span: "col-span-2" },
+  { icon: "heart", title: "Real human support", body: "Advisors and tutors who actually reply, and a community that keeps you moving when motivation dips.", span: "col-span-3", wide: true },
+  { icon: "scale", title: "Fair & transparent", body: "Clear pricing, no lock-in, lifetime access, and a first course that's genuinely free.", span: "col-span-3", wide: true },
 ];
 
 export default function AboutPage() {
@@ -52,16 +55,9 @@ export default function AboutPage() {
         <header className="relative mt-[40px] overflow-hidden">
           <div aria-hidden className="pointer-events-none absolute inset-0 -z-10" style={{ background: "radial-gradient(58% 120% at 82% -10%, rgba(80,188,126,0.16), transparent 60%)" }} />
           <div className="w-full max-w-[1440px] mx-auto px-[100px] max-xl:px-[60px] max-sm:px-[30px]">
-            <nav className="flex items-center gap-[8px] text-[14px] text-[#566b5d]" aria-label="Breadcrumb">
-              <Link href="/" className="hover:text-[#056839]">Home</Link>
-              <span aria-hidden>/</span>
-              <span className="font-medium text-[#0a4a29]">About</span>
-            </nav>
+            <Breadcrumbs items={[{ label: "About" }]} />
             <div className="mt-[18px] max-w-[760px]">
-              <span className="chip text-[14px] text-[#0a4a29]">
-                <span className="h-[7px] w-[7px] rounded-full bg-[#50bc7e]" /> Melbourne, Australia · since 2018
-              </span>
-              <h1 className="mt-[18px] text-[clamp(2.5rem,5vw,3.9rem)]/[1.03] font-medium tracking-[-0.03em] text-[#0a4a29]">
+              <h1 className="text-[clamp(2.5rem,5vw,3.9rem)]/[1.03] font-medium tracking-[-0.03em] text-[#0a4a29]">
                 We help you turn study into a{" "}
                 <span className="marker">life in Australia</span>.
               </h1>
@@ -96,7 +92,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="relative overflow-hidden rounded-[26px] border border-[#dbe6dd] bg-[#0a4a29] p-[36px] text-white shadow-[var(--shadow-e2)]">
+            <div className="relative overflow-hidden rounded-[20px] border border-[#e4ece7] bg-[#0a4a29] p-[36px] text-white shadow-[var(--shadow-soft)]">
               <div className="rings-ink pointer-events-none absolute inset-0 opacity-70" aria-hidden />
               <p className="relative text-[13px] font-semibold uppercase tracking-[0.08em] text-[#8fe3b7]">By the numbers</p>
               <div className="relative mt-[22px] grid grid-cols-2 gap-x-[24px] gap-y-[28px]">
@@ -114,22 +110,83 @@ export default function AboutPage() {
         {/* ── Values ─────────────────────────────────────────── */}
         <section className="mt-[100px] max-lg:mt-[72px] w-full max-w-[1440px] mx-auto px-[100px] max-xl:px-[60px] max-sm:px-[30px]">
           <div className="max-w-[620px]">
-            <h2 className="text-[clamp(2rem,3.6vw,2.7rem)]/[1.1] font-medium tracking-[-0.02em] text-[#0a4a29]">
-              What we <span className="underline-brand">stand for</span>
+            <h2 className="text-[clamp(2rem,3.6vw,2.9rem)]/[1.08] font-medium tracking-[-0.03em] text-[#0a4a29]">
+              What we stand for
             </h2>
-            <p className="mt-[14px] text-[17px]/[1.6] text-[#566b5d]">
+            <p className="text-pretty mt-[16px] text-[17px]/[1.6] text-[#566b5d]">
               Six principles that shape every course, tutorial and reply.
             </p>
           </div>
-          <div className="mt-[32px] grid grid-cols-3 gap-[22px] max-lg:grid-cols-2 max-sm:grid-cols-1">
-            {values.map((v) => (
-              <div key={v.title} className="lift rounded-[22px] border border-[#dbe6dd] bg-white p-[26px] shadow-[var(--shadow-e1)]">
-                <span className="grid h-[46px] w-[46px] place-items-center rounded-[14px] bg-[#e8f6ee] text-[#056839]">
-                  <ValueIcon name={v.icon} />
-                </span>
-                <h3 className="mt-[16px] text-[18px] font-semibold text-[#0a4a29]">{v.title}</h3>
-                <p className="mt-[8px] text-[14.5px]/[1.6] text-[#566b5d]">{v.body}</p>
-              </div>
+          <div className="mt-[36px] grid auto-rows-[minmax(184px,auto)] grid-cols-6 gap-[18px] max-lg:grid-cols-2 max-sm:grid-cols-1">
+            {values.map((v, i) => (
+              <article
+                key={v.title}
+                className={cn(
+                  "group relative flex flex-col overflow-hidden rounded-[20px] border p-[26px] transition-all duration-400 ease-[var(--ease-out-quint)] hover:-translate-y-1.5 max-lg:col-span-1 max-lg:row-span-1",
+                  v.span,
+                  v.featured
+                    ? "border-transparent bg-[#0a4a29]"
+                    : "border-[#e4ece7] bg-white hover:border-[#50bc7e] hover:shadow-[var(--shadow-soft)]",
+                  v.wide && "max-lg:justify-start lg:flex-row lg:items-start lg:gap-[22px]",
+                )}
+              >
+                {v.featured && (
+                  <span aria-hidden className="rings pointer-events-none absolute inset-0 opacity-40" />
+                )}
+
+                <div
+                  className={cn(
+                    "relative flex items-center justify-between gap-[12px]",
+                    v.wide && "lg:block lg:shrink-0",
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "grid h-[46px] w-[46px] place-items-center rounded-[14px] transition-colors duration-400",
+                      v.featured
+                        ? "bg-white/10 text-[#9fe9c1] ring-1 ring-white/15"
+                        : "bg-[#e8f6ee] text-[#056839] group-hover:bg-[#0a4a29] group-hover:text-white",
+                    )}
+                  >
+                    <ValueIcon name={v.icon} />
+                  </span>
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "text-[13px] font-medium tabular-nums",
+                      v.featured ? "text-white/30" : "text-[#b6c7bc]",
+                      v.wide && "lg:hidden",
+                    )}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                </div>
+
+                <div className={cn("relative", v.wide ? "lg:mt-0" : "mt-[18px]", v.wide && "max-lg:mt-[18px]")}>
+                  <h3
+                    className={cn(
+                      "font-medium tracking-[-0.01em]",
+                      v.featured ? "text-[21px] text-white" : "text-[18px] text-[#0a4a29]",
+                    )}
+                  >
+                    {v.title}
+                  </h3>
+                  <p
+                    className={cn(
+                      "text-pretty mt-[8px] text-[14.5px]/[1.6]",
+                      v.featured ? "text-white/75" : "text-[#566b5d]",
+                    )}
+                  >
+                    {v.body}
+                  </p>
+                </div>
+
+                {v.featured && (
+                  <p className="relative mt-auto pt-[22px] text-[13px] font-medium uppercase tracking-[0.09em] text-[#9fe9c1]">
+                    The one that decides the rest
+                  </p>
+                )}
+              </article>
             ))}
           </div>
         </section>

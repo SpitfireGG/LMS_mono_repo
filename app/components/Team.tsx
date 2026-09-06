@@ -4,44 +4,117 @@ import { cn } from "@/app/lib/utils";
 import TeamCard from "./TeamCard";
 import Button from "./Button";
 import { useTeamMembers } from "@/app/lib/api/hooks";
-import type { TeamMemberItem as ApiTeamMemberItem } from "@/app/lib/api/types";
+
+type Tutor = {
+  id: string;
+  name: string;
+  title: string;
+  description: string;
+  imageSrc?: string;
+  tags?: string[];
+};
+
+/** Keeps the section alive when the CMS has nothing published. */
+const fallbackTutors: Tutor[] = [
+  {
+    id: "t1",
+    name: "Sujata Adhikari",
+    title: "Lead NAATI CCL tutor · Nepali",
+    description:
+      "NAATI-certified interpreter with nine years in community health settings. Marks every recording against the live rubric.",
+    tags: ["Nepali", "CCL"],
+  },
+  {
+    id: "t2",
+    name: "Ravi Menon",
+    title: "Senior tutor · Hindi & Malayalam",
+    description:
+      "Ran CCL preparation for two Melbourne migrant centres before joining us. Specialises in dialogue pacing and note-taking.",
+    tags: ["Hindi", "Malayalam", "CCL"],
+  },
+  {
+    id: "t3",
+    name: "Layla Haddad",
+    title: "Senior tutor · Arabic",
+    description:
+      "Twelve years interpreting across legal and medical settings. Builds the glossaries our Arabic candidates sit with.",
+    tags: ["Arabic", "CCL"],
+  },
+  {
+    id: "t4",
+    name: "Duy Tran",
+    title: "Tutor · Vietnamese",
+    description:
+      "Focused on the segments candidates lose marks on most: register shifts and long-turn recall under time pressure.",
+    tags: ["Vietnamese", "CCL"],
+  },
+  {
+    id: "t5",
+    name: "Grace Okonkwo",
+    title: "PTE & IELTS lead",
+    description:
+      "Former examiner. Coaches the speaking and writing bands where a single technique change moves a whole score.",
+    tags: ["PTE", "IELTS"],
+  },
+  {
+    id: "t6",
+    name: "Hui Zhang",
+    title: "Tutor · Mandarin & Cantonese",
+    description:
+      "Runs our mock-test panel and calibrates scoring so a practice mark means the same as a real one.",
+    tags: ["Mandarin", "Cantonese", "CCL"],
+  },
+];
 
 export default function Team({ className }: { className?: string }) {
-  const { data, isLoading, error } = useTeamMembers({ limit: 6 });
-  const teamMembers = data?.data ?? [];
+  const { data, isLoading } = useTeamMembers({ limit: 6 });
 
-  if (isLoading) {
-    return (
-      <div className="max-w-[1440px] mx-auto px-[100px] max-xl:px-[60px] max-sm:px-[30px] scroll-mt-[40px]" id="team">
-        <div className={cn("grid grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1 gap-[40px] max-xl:gap-[30px] max-sm:gap-[20px] relative", className)}>
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="animate-pulse bg-white border border-[#cfe3d6] rounded-[20px] h-[320px] p-6" />
-          ))}
-        </div>
-      </div>
-    );
-  }
+  const published: Tutor[] = (data?.data ?? []).map((m) => ({
+    id: m.id,
+    name: m.name,
+    title: m.role,
+    description: m.bio ?? "",
+    imageSrc: m.image ?? undefined,
+  }));
 
-  if (error || teamMembers.length === 0) {
-    return null;
-  }
+  const tutors = published.length > 0 ? published : fallbackTutors;
+  const showSkeleton = isLoading && published.length === 0;
 
   return (
-    <div className="max-w-[1440px] mx-auto px-[100px] max-xl:px-[60px] max-sm:px-[30px] scroll-mt-[40px]" id="team">
-      <div className={cn("grid grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1 gap-[40px] max-xl:gap-[30px] max-sm:gap-[20px] relative", className)} data-name="Group of cards">
-        {teamMembers.map((member) => (
-          <TeamCard
-            key={member.id}
-            name={member.name}
-            title={member.role}
-            description={member.bio ?? ""}
-            imageSrc={member.image ?? ""}
-          />
-        ))}
+    <div
+      className="mx-auto max-w-[1440px] scroll-mt-[40px] px-[100px] max-xl:px-[60px] max-sm:px-[30px]"
+      id="team"
+    >
+      <div
+        className={cn(
+          "grid grid-cols-3 gap-[28px] max-xl:gap-[22px] max-lg:grid-cols-2 max-md:grid-cols-1",
+          className,
+        )}
+      >
+        {showSkeleton
+          ? [...Array(6)].map((_, i) => (
+              <div
+                key={i}
+                className="offset-card h-[300px] animate-pulse bg-white"
+              />
+            ))
+          : tutors.map((tutor) => (
+              <TeamCard
+                key={tutor.id}
+                name={tutor.name}
+                title={tutor.title}
+                description={tutor.description}
+                imageSrc={tutor.imageSrc}
+                tags={tutor.tags}
+              />
+            ))}
       </div>
-      <Button variant="primary" className="mt-[40px] block ml-auto py-[19px] px-[76px] max-sm:w-full max-sm:justify-center">
-        See all tutors
-      </Button>
+
+      <div className="flex justify-center mt-[44px]">
+        <Button variant="primary" href="/about" className="py-[19px] px-[35px]">
+          See all tutors
+        </Button>
+      </div>
     </div>
   );
 }

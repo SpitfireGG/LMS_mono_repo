@@ -51,7 +51,7 @@ export default function Contact({ className }: ContactProps) {
       )}
       id="contact"
     >
-      <div className="bg-[#e8f6ee] flex gap-[28px] pb-[80px] pt-[60px] max-xl:py-[50px] max-sm:py-[30px] pl-[100px] max-xl:pl-[60px] max-lg:px-[40px] max-sm:px-[30px] relative rounded-[45px] shrink-0 w-full overflow-hidden">
+      <div className="bg-[#e8f6ee] flex gap-[28px] pb-[80px] pt-[60px] max-xl:py-[50px] max-sm:py-[30px] pl-[100px] max-xl:pl-[60px] max-lg:px-[40px] max-sm:px-[30px] relative rounded-[32px] shrink-0 w-full overflow-hidden">
         <form
           onSubmit={handleSubmit}
           className="flex flex-col gap-[39px] w-full relative flex-1 z-10"
